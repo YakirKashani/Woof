@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    tools:context=".View.NewDogWeightAndHeightActivity"
+    android:background="@color/woof_background">
+
+
+    <ImageView
+        android:id="@+id/WAH_IV_Previous"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/left"
+        >
+
+    </ImageView>
+
+    <RelativeLayout
+        android:id="@+id/WAH_RL_Weight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/WAH_IV_Previous"
+        android:layout_marginTop="20dp">
+
+    <Switch
+        android:id="@+id/WAH_Switch_WeightSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Weight"
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/WAH_MTV_WeightSeekbarValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="20"
+        android:layout_below="@id/WAH_Switch_WeightSwitch"
+        android:layout_marginTop="30dp"
+        android:textSize="16sp"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/WAH_MTV_WeightSeekbarMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="14sp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/WAH_MTV_WeightSeekbarValue"
+        android:layout_alignParentStart="true"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/WAH_MTV_WeightSeekbarMax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="40"
+        android:textSize="14sp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/WAH_MTV_WeightSeekbarValue"
+        android:layout_marginTop="10dp"/>
+
+    <SeekBar
+        android:id="@+id/WAH_Seekbar_Weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/WAH_MTV_WeightSeekbarValue"
+        android:layout_marginTop="10dp"
+        android:layout_toStartOf="@id/WAH_MTV_WeightSeekbarMax"
+        android:layout_toEndOf="@id/WAH_MTV_WeightSeekbarMin"
+        android:max="400"
+        android:progress="200"
+        />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/WAH_RL_Height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/WAH_RL_Weight"
+        android:layout_marginTop="40dp">
+
+        <Switch
+            android:id="@+id/WAH_Switch_HeightSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Height"
+            android:textSize="30sp"
+            android:layout_centerHorizontal="true"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/WAH_MTV_HeightSeekbarValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50"
+            android:layout_below="@id/WAH_Switch_HeightSwitch"
+            android:layout_marginTop="30dp"
+            android:textSize="16sp"
+            android:layout_centerHorizontal="true"
+            android:visibility="invisible"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/WAH_MTV_HeightSeekbarMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="14sp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/WAH_MTV_HeightSeekbarValue"
+            android:layout_alignParentStart="true"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/WAH_MTV_HeightSeekbarMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100"
+            android:textSize="14sp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/WAH_MTV_HeightSeekbarValue"
+            android:layout_marginTop="10dp"/>
+
+        <SeekBar
+            android:id="@+id/WAH_Seekbar_Height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/WAH_MTV_HeightSeekbarValue"
+            android:layout_marginTop="10dp"
+            android:layout_toStartOf="@id/WAH_MTV_HeightSeekbarMax"
+            android:layout_toEndOf="@id/WAH_MTV_HeightSeekbarMin"
+            android:max="100"
+            android:progress="50"
+            />
+    </RelativeLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/WAH_MB_Finish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="finish"
+        >
+
+    </com.google.android.material.button.MaterialButton>
+
+</RelativeLayout>

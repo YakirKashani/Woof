@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.ChooseDogActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background"
+        android:scaleType="centerCrop"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackgroundLayer"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ACD_MTV_chooseDog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose dog"
+        android:textSize="20sp"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </com.google.android.material.textview.MaterialTextView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ACD_RV_UsersDogs"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:padding="8dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/ACD_MTV_chooseDog"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/ACD_MB_AddDog"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_above="@id/ACD_MB_chooseDog"
+        android:layout_centerHorizontal="true"
+        android:text="Add new dog"
+        app:layout_constraintTop_toBottomOf="@id/ACD_RV_UsersDogs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@null"
+        android:background="@drawable/button_background"
+        android:textAllCaps="false"
+
+        >
+
+    </com.google.android.material.button.MaterialButton>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/ACD_MB_chooseDog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ACD_MB_AddDog"
+        app:backgroundTint="@null"
+        android:background="@drawable/button_background"
+        >
+
+    </com.google.android.material.button.MaterialButton>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

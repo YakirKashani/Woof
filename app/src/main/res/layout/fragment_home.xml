@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeFragment">
+
+    <RelativeLayout
+        android:id="@+id/home_TB_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        >
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/home_SIV_chat"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/baseline_chat_24"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            android:layout_centerVertical="true"
+            />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/home_SIV_notifications"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/baseline_notifications_none_24"
+            android:layout_toStartOf="@id/home_SIV_chat"
+            android:layout_marginEnd="16dp"
+            android:layout_centerVertical="true"
+            />
+
+        <ImageView
+            android:id="@+id/DogPictureToCheck"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_thumb_up_24"
+            >
+
+        </ImageView>
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/home_NSV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <!-- Stories Section -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/hone_RV_stories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:scrollbars="horizontal"
+            android:clipToPadding="false"/>
+
+        <!-- Posts Section -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/hone_RV_posts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/hone_RV_stories"
+            android:padding="8dp"/>
+    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>

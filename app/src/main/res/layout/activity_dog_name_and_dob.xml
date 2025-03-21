@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.DogNameAndDobActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background"
+        android:scaleType="centerCrop"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackgroundLayer"/>
+
+    <ImageView
+        android:id="@+id/NameAndDOB_IV_DogImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:src="@drawable/dog_profile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white"
+        >
+
+    </ImageView>
+
+    <TextView
+        android:id="@+id/NameAndDOB_TV_textEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Dog Name"
+        android:textAllCaps="false"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@id/NameAndDOB_V_viewNameDivider"
+        app:layout_constraintStart_toEndOf="@id/NameAndDOB_IV_imageName"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_IV_DogImage"/>
+
+    <EditText
+        android:id="@+id/NameAndDOB_ET_inputDogName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@null"
+        android:gravity="top"
+        android:hint="my dog"
+        android:inputType="text"
+        android:minHeight="35dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="@id/NameAndDOB_V_viewNameDivider"
+        app:layout_constraintStart_toEndOf="@id/NameAndDOB_IV_imageName"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_TV_textEmail"
+        tools:ignore="Autofill"/>
+
+    <View
+        android:id="@+id/NameAndDOB_V_viewNameDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_ET_inputDogName"/>
+
+    <ImageView
+        android:id="@+id/NameAndDOB_IV_imageName"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/shtrodel"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/NameAndDOB_V_viewNameDivider"
+        app:layout_constraintStart_toStartOf="@id/NameAndDOB_V_viewNameDivider"
+        app:layout_constraintTop_toTopOf="@id/NameAndDOB_TV_textEmail"/>
+
+    <TextView
+        android:id="@+id/NameAndDOB_TV_textDOB"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Date of birth"
+        android:textAllCaps="false"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@id/NameAndDOB_V_viewDOBDivider"
+        app:layout_constraintStart_toEndOf="@id/NameAndDOB_IV_imageDOB"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_V_viewNameDivider"/>
+
+    <EditText
+        android:id="@+id/NameAndDOB_ET_inputDOB"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@null"
+        android:gravity="top"
+        android:hint="DD/MM/YYYY"
+        android:inputType="textEmailAddress"
+        android:minHeight="35dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="@id/NameAndDOB_V_viewDOBDivider"
+        app:layout_constraintStart_toEndOf="@id/NameAndDOB_IV_imageDOB"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_TV_textDOB"
+        tools:ignore="Autofill"/>
+
+    <View
+        android:id="@+id/NameAndDOB_V_viewDOBDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_ET_inputDOB"/>
+
+    <ImageView
+        android:id="@+id/NameAndDOB_IV_imageDOB"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/baseline_calendar_month_24"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/NameAndDOB_V_viewDOBDivider"
+        app:layout_constraintStart_toStartOf="@id/NameAndDOB_V_viewDOBDivider"
+        app:layout_constraintTop_toTopOf="@id/NameAndDOB_TV_textDOB"/>
+
+    <TextView
+        android:id="@+id/NameAndDOB_TV_textWeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Weight"
+        android:textAllCaps="false"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@id/NameAndDOB_V_viewWeightDivider"
+        app:layout_constraintStart_toEndOf="@id/NameAndDOB_IV_imageWeight"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_V_viewDOBDivider"/>
+
+    <EditText
+        android:id="@+id/NameAndDOB_ET_inputWeight"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@null"
+        android:gravity="top"
+        android:hint="KG"
+        android:inputType="numberDecimal"
+        android:minHeight="35dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toEndOf="@id/NameAndDOB_V_viewWeightDivider"
+        app:layout_constraintStart_toEndOf="@id/NameAndDOB_IV_imageWeight"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_TV_textWeight"
+        tools:ignore="Autofill"/>
+
+    <View
+        android:id="@+id/NameAndDOB_V_viewWeightDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_ET_inputWeight"/>
+
+    <ImageView
+        android:id="@+id/NameAndDOB_IV_imageWeight"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="8dp"
+        app:tint="@color/white"
+        android:src="@drawable/scale"
+        app:layout_constraintBottom_toTopOf="@id/NameAndDOB_V_viewWeightDivider"
+        app:layout_constraintStart_toStartOf="@id/NameAndDOB_V_viewWeightDivider"
+        app:layout_constraintTop_toTopOf="@id/NameAndDOB_TV_textWeight"/>
+
+
+    <GridLayout
+        android:id="@+id/NameAndDOB_GL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:alignmentMode="alignMargins"
+        android:padding="8dp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/NameAndDOB_V_viewWeightDivider"
+        >
+
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/NameAndDOB_Chip_Male"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="Male"
+            android:checkable="true"
+            app:checkedIconVisible="false"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_marginEnd="16dp"
+            />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/NameAndDOB_Chip_Female"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:text="Female"
+            android:checkable="true"
+            app:checkedIconVisible="false"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_marginStart="16dp"/>
+
+    </GridLayout>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/NameAndDOB_MB_Next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="next"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="15dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/button_background"
+        android:textColor="@color/white"
+        android:layout_marginHorizontal="50dp"
+        >
+
+    </com.google.android.material.button.MaterialButton>
+
+ <!--   <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/NameAndDOB_TIL_DogDob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="date of birth"
+        android:layout_marginTop="80dp"
+        android:layout_below="@id/NameAndDOB_ET_DogName"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/baseline_calendar_month_24"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/NameAndDOB_TIET_DogDob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="true"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:textStyle="bold"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout> -->
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
