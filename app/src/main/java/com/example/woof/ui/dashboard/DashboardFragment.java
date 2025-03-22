@@ -1,5 +1,6 @@
 package com.example.woof.ui.dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,9 @@ import com.example.woof.Adapters.UserDogsAdapter;
 import com.example.woof.Model.Dog;
 import com.example.woof.Model.Owner;
 import com.example.woof.R;
+import com.example.woof.View.DogProfile;
+import com.example.woof.View.MainActivity;
+import com.example.woof.View.OwnerProfile;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.DogApi;
 import com.example.woof.WoofBackend.OwnerApi;
@@ -45,7 +49,6 @@ public class DashboardFragment extends Fragment {
     private SearchOwnersAdapter ownersAdapter;
     private boolean isDogs;
     private String searchText;
-
 
     DogApi dogApiService = ApiController.getRetrofitInstance().create(DogApi.class);
     OwnerApi ownerApiService = ApiController.getRetrofitInstance().create(OwnerApi.class);
@@ -79,11 +82,16 @@ public class DashboardFragment extends Fragment {
         Dashboard_RV.setLayoutManager(new LinearLayoutManager(getContext()));
         dogsAdapter = new SearchDogsAdapter(dogs,selectedDog -> {
             //TODO: open dog profile intent
-
+            Intent intent = new Intent(getActivity(),DogProfile.class);
+            intent.putExtra("DogName",selectedDog.getName());
+            intent.putExtra("DogOwner",selectedDog.getOwnerEmail());
+            startActivity(intent);
         });
         ownersAdapter = new SearchOwnersAdapter(owners, selectedOwner -> {
             //TODO: open owner profile intent
-
+            Intent intent = new Intent(getActivity(), OwnerProfile.class);
+            intent.putExtra("OwnerEmail",selectedOwner.getMail());
+            startActivity(intent);
         });
 
         Dashboard_RV.setAdapter(dogsAdapter);

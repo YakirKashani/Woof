@@ -29,10 +29,10 @@ public interface OwnerApi {
             @Body String dogName
     );
 
-    @GET("owner/getOwnerDogs/{ownerEmail}")
+ /*   @GET("owner/getOwnerDogs/{ownerEmail}")
     Call<List<Dog>>getAllDogsByOwner(
             @Path("ownerEmail") String ownerEmail
-    );
+    );*/
 
     @GET("owner/search/{ownerMail}")
     Call<List<Owner>> searchOwner(

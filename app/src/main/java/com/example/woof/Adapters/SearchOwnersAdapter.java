@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,6 +45,11 @@ public class SearchOwnersAdapter extends RecyclerView.Adapter<SearchOwnersAdapte
             holder.POS_IV_OwnerPicture.setImageResource(R.drawable.default_owner_picture);
         else
             Glide.with(holder.itemView.getContext()).load(owner.getPhotoURL()).error(R.drawable.default_owner_picture).into(holder.POS_IV_OwnerPicture);
+
+        holder.POS_RL_Container.setOnClickListener(v -> {
+            if(listener!=null)
+                listener.OnOwnerSelected(owner);
+        });
     }
 
     @Override
@@ -54,11 +60,13 @@ public class SearchOwnersAdapter extends RecyclerView.Adapter<SearchOwnersAdapte
     public static class SearchResultViewHolder extends RecyclerView.ViewHolder{
         private ShapeableImageView POS_IV_OwnerPicture;
         private MaterialTextView POS_MTV_OwnerMail;
+        private RelativeLayout POS_RL_Container;
 
         public SearchResultViewHolder(@NonNull View itemView) {
             super(itemView);
             POS_IV_OwnerPicture = itemView.findViewById(R.id.POS_IV_OwnerPicture);
             POS_MTV_OwnerMail = itemView.findViewById(R.id.POS_MTV_OwnerMail);
+            POS_RL_Container = itemView.findViewById(R.id.POS_RL_Container);
         }
     }
 }

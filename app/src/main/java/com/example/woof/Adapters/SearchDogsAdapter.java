@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +46,13 @@ public class SearchDogsAdapter extends RecyclerView.Adapter<SearchDogsAdapter.Se
             holder.PCS_IV_DogPicture.setImageResource(R.drawable.default_dog_picture);
         else
             Glide.with(holder.itemView.getContext()).load(dog.getPhotoURL()).error(R.drawable.default_dog_picture).into(holder.PCS_IV_DogPicture);
+
+        // TODO: add on click listener PCS_RL_Container
+        holder.PCS_RL_Container.setOnClickListener(v -> {
+            if(listener!=null)
+                listener.OnDogProfileSelected(dog);
+        });
+
     }
 
     @Override
@@ -53,15 +61,17 @@ public class SearchDogsAdapter extends RecyclerView.Adapter<SearchDogsAdapter.Se
     }
 
     public static class SearchResultViewHolder extends RecyclerView.ViewHolder{
-        ShapeableImageView PCS_IV_DogPicture;
-        MaterialTextView PCS_MTV_DogName;
-        MaterialTextView PCS_MTV_DogOwner;
+        private ShapeableImageView PCS_IV_DogPicture;
+        private MaterialTextView PCS_MTV_DogName;
+        private MaterialTextView PCS_MTV_DogOwner;
+        private RelativeLayout PCS_RL_Container;
 
         public SearchResultViewHolder(@NonNull View itemView) {
             super(itemView);
             PCS_IV_DogPicture = itemView.findViewById(R.id.PCS_IV_DogPicture);
             PCS_MTV_DogName = itemView.findViewById(R.id.PCS_MTV_DogName);
             PCS_MTV_DogOwner = itemView.findViewById(R.id.PCS_MTV_DogOwner);
+            PCS_RL_Container = itemView.findViewById(R.id.PCS_RL_Container);
 
         }
     }

@@ -8,6 +8,7 @@
     app:cardUseCompatPadding="false"
     >
     <RelativeLayout
+        android:id="@+id/POS_RL_Container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >

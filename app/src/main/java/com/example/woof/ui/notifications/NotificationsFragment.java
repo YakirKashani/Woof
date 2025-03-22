@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
+import com.example.woof.R;
 import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.Singleton.CurrentUserManager;
 import com.example.woof.databinding.FragmentNotificationsBinding;
@@ -52,10 +53,15 @@ public class NotificationsFragment extends Fragment {
     private void initViews(){
         Log.e("Current Dog manager", CurrentDogManager.getInstance().getDog().toString());
         Log.e("Current Owner manager", CurrentUserManager.getInstance().getOwner().toString());
-        Glide.with(this)
-                .load(CurrentDogManager.getInstance().getDog().getPhotoURL())
-                .into(FN_IV_DogPicture);
-        Glide.with(this).load(CurrentUserManager.getInstance().getOwner().getPhotoURL()).into(FN_IV_OwnerPicture);
+        if(CurrentDogManager.getInstance().getDog().getPhotoURL() == null)
+            FN_IV_DogPicture.setImageResource(R.drawable.default_dog_picture);
+        else
+            Glide.with(this).load(CurrentDogManager.getInstance().getDog().getPhotoURL()).error(R.drawable.default_dog_picture).into(FN_IV_DogPicture);
+
+        if(CurrentUserManager.getInstance().getOwner().getPhotoURL() == null)
+            FN_IV_OwnerPicture.setImageResource(R.drawable.default_owner_picture);
+        else
+            Glide.with(this).load(CurrentUserManager.getInstance().getOwner().getPhotoURL()).error(R.drawable.default_owner_picture).into(FN_IV_OwnerPicture);
 
         FN_MTV_OwnerEmail.setText(CurrentUserManager.getInstance().getOwner().getMail());
         textName.setText(CurrentDogManager.getInstance().getDog().getName());
