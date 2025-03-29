@@ -1,6 +1,5 @@
 package com.example.woof.WoofBackend;
 
-import com.example.woof.Model.Dog;
 import com.example.woof.Model.NewOwner;
 import com.example.woof.Model.Owner;
 

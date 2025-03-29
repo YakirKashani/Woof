@@ -1,6 +1,7 @@
 package com.example.woof.Singleton;
 
 import com.example.woof.Model.Dog;
+import com.example.woof.Model.NewDog;
 
 public class CurrentDogManager {
     private static CurrentDogManager instance;

@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -16,12 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.woof.Adapters.SearchDogsAdapter;
 import com.example.woof.Adapters.SearchOwnersAdapter;
-import com.example.woof.Adapters.UserDogsAdapter;
 import com.example.woof.Model.Dog;
 import com.example.woof.Model.Owner;
 import com.example.woof.R;
+import com.example.woof.Singleton.CurrentDogManager;
+import com.example.woof.Singleton.CurrentUserManager;
 import com.example.woof.View.DogProfile;
-import com.example.woof.View.MainActivity;
 import com.example.woof.View.OwnerProfile;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.DogApi;
@@ -168,6 +167,7 @@ public class DashboardFragment extends Fragment {
             public void onResponse(Call<List<Dog>> call, Response<List<Dog>> response) {
                 dogs.clear();
                 dogs.addAll(response.body());
+                dogs.removeIf(dog -> (Objects.equals(dog.getOwnerEmail(), CurrentDogManager.getInstance().getDog().getOwnerEmail()) && (Objects.equals(dog.getName(), CurrentDogManager.getInstance().getDog().getName()))));
                 dogsAdapter.notifyDataSetChanged();
             }
 
@@ -181,7 +181,7 @@ public class DashboardFragment extends Fragment {
     private void fetchOwners(String ownerName){
         if(ownerName == ""){
             owners.clear();
-            ownersAdapter.notifyDataSetChanged();;
+            ownersAdapter.notifyDataSetChanged();
             return;
         }
         Call<List<Owner>> call = ownerApiService.searchOwner(ownerName);
@@ -190,6 +190,7 @@ public class DashboardFragment extends Fragment {
             public void onResponse(Call<List<Owner>> call, Response<List<Owner>> response) {
                 owners.clear();
                 owners.addAll(response.body());
+                owners.removeIf(owner -> Objects.equals(owner.getMail(), CurrentUserManager.getInstance().getOwner().getMail()));
                 ownersAdapter.notifyDataSetChanged();
             }
 
@@ -200,10 +201,6 @@ public class DashboardFragment extends Fragment {
         });
 
     }
-
-
-
-
 
     @Override
     public void onDestroyView() {

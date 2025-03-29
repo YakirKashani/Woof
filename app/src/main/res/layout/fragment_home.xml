@@ -1,73 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <RelativeLayout
-        android:id="@+id/home_TB_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        >
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/home_SIV_chat"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/baseline_chat_24"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="16dp"
-            android:layout_centerVertical="true"
-            />
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/home_SIV_notifications"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/baseline_notifications_none_24"
-            android:layout_toStartOf="@id/home_SIV_chat"
-            android:layout_marginEnd="16dp"
-            android:layout_centerVertical="true"
-            />
-
-        <ImageView
-            android:id="@+id/DogPictureToCheck"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/baseline_thumb_up_24"
-            >
-
-        </ImageView>
-    </RelativeLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/home_NSV"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/FH_LL_NewPostContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/FH_RV_Posts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="8dp">
+
+    <!--Post Input section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:background="@drawable/post_input_background"
+        >
 
-        <!-- Stories Section -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/hone_RV_stories"
+        <EditText
+            android:id="@+id/FH_ET_PostDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_marginTop="8dp"
-            android:scrollbars="horizontal"
-            android:clipToPadding="false"/>
+            android:hint="What's on your mind?"
+            android:background="@null"
+            android:padding="10dp"
+            android:minHeight="100dp"
+            android:gravity="top"
+            android:inputType="textMultiLine"/>
 
-        <!-- Posts Section -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/hone_RV_posts"
+        <ImageView
+            android:id="@+id/FH_IV_UploadedImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/hone_RV_stories"
-            android:padding="8dp"/>
-    </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+            android:layout_height="300dp"
+            android:layout_marginVertical="8dp"/>
 
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end|center_vertical"
+            android:layout_marginTop="8dp"
+            >
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/FH_SIV_addEvent"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:src="@drawable/baseline_event_note_24"
+                android:layout_marginEnd="8dp"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/FH_SIV_AddPhoto"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:src="@drawable/baseline_insert_photo_24"
+                android:layout_marginEnd="8dp"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+        android:id="@+id/FH_MB_PostButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        app:backgroundTint="@null"
+        android:background="@drawable/purple_gradient_button_background"
+        android:text="Post"
+        android:padding="10dp"
+        android:layout_marginTop="5dp"
+        />
+
+    </LinearLayout>
+    </LinearLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/FH_RV_Posts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/FH_LL_NewPostContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            android:nestedScrollingEnabled="false"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</androidx.core.widget.NestedScrollView>

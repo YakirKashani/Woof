@@ -162,29 +162,30 @@
             app:layout_constraintTop_toTopOf="@id/layoutProfile"/>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/FN_RV_Posts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:clipToPadding="false"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="3"
-            app:layout_constraintTop_toBottomOf="@id/layoutProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/layoutProfile"
+            app:spanCount="3" />
 
- <!--       <com.google.android.material.button.MaterialButton
-            android:id="@+id/FollowMB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Follow"
-            app:strokeColor="@color/black"
-            app:strokeWidth="1dp"
-            app:cornerRadius="8dp"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/layoutProfile"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/> -->
+        <!--       <com.google.android.material.button.MaterialButton
+                   android:id="@+id/FollowMB"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Follow"
+                   app:strokeColor="@color/black"
+                   app:strokeWidth="1dp"
+                   app:cornerRadius="8dp"
+                   android:backgroundTint="@color/white"
+                   android:textColor="@color/black"
+                   app:layout_constraintTop_toBottomOf="@id/layoutProfile"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintEnd_toEndOf="parent"/> -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     

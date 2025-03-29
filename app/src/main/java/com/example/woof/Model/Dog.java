@@ -1,5 +1,7 @@
 package com.example.woof.Model;
 
+import java.util.List;
+
 public class Dog {
     private String breed;
     private String ownerEmail;
@@ -8,10 +10,8 @@ public class Dog {
     private String dob;
     private float weight;
     private String gender;
-
-
-    public Dog() {
-    }
+    private List<String> followers;
+    private List<String> following;
 
     public String getBreed() {
         return breed;
@@ -69,6 +69,22 @@ public class Dog {
         this.gender = gender;
     }
 
+    public List<String> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<String> followers) {
+        this.followers = followers;
+    }
+
+    public List<String> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<String> following) {
+        this.following = following;
+    }
+
     @Override
     public String toString() {
         return "Dog{" +
@@ -79,6 +95,8 @@ public class Dog {
                 ", dob='" + dob + '\'' +
                 ", weight=" + weight +
                 ", gender='" + gender + '\'' +
+                ", followers=" + followers +
+                ", following=" + following +
                 '}';
     }
 }

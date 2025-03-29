@@ -29,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.example.woof.Model.Dog;
+import com.example.woof.Model.NewDog;
 import com.example.woof.R;
 import com.example.woof.Singleton.CloudinaryManager;
 import com.example.woof.Singleton.CurrentDogManager;
@@ -299,7 +300,7 @@ public class DogNameAndDobActivity extends AppCompatActivity {
         String dogWeightStr = NameAndDOB_ET_inputWeight.getText().toString();
         float DogWeight = Float.parseFloat(dogWeightStr); // CRUSH
 
-        Dog dog = new Dog();
+        NewDog dog = new NewDog();
         dog.setBreed(DogBreed);
         dog.setOwnerEmail(CurrentUserManager.getInstance().getOwner().getMail());
         dog.setPhotoURL(imageURL);

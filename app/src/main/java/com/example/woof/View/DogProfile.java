@@ -5,22 +5,26 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.woof.Adapters.PostsAdapter;
 import com.example.woof.Model.Dog;
 import com.example.woof.Model.Owner;
+import com.example.woof.Model.Post;
 import com.example.woof.R;
+import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.DogApi;
 import com.example.woof.WoofBackend.OwnerApi;
+import com.example.woof.WoofBackend.PostApi;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,8 +42,12 @@ public class DogProfile extends AppCompatActivity {
     private MaterialButton ADP_MB_FollowMB;
     private String ownerEmail;
     private String dogName;
+    private List<Post> posts;
+    private PostsAdapter postsAdapter;
     DogApi dogApiService = ApiController.getRetrofitInstance().create(DogApi.class);
     OwnerApi ownerApiService = ApiController.getRetrofitInstance().create(OwnerApi.class);
+    PostApi postApiService = ApiController.getRetrofitInstance().create(PostApi.class);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +77,13 @@ public class DogProfile extends AppCompatActivity {
     }
 
     private void initViews(){
+        posts = new ArrayList<>();
+        ADP_RV_Posts.setLayoutManager(new GridLayoutManager(this,3));
+        postsAdapter = new PostsAdapter(this,posts,selectedPost -> {
+
+        });
+        ADP_RV_Posts.setAdapter(postsAdapter);
+
         ADP_MTV_textName.setText(dogName);
         ADP_TV_textOwner.setText(ownerEmail);
 
@@ -81,6 +96,31 @@ public class DogProfile extends AppCompatActivity {
                     ADP_IV_DogPicture.setImageResource(R.drawable.default_dog_picture);
                 else
                     Glide.with(DogProfile.this).load(dog.getPhotoURL()).error(R.drawable.default_dog_picture).into(ADP_IV_DogPicture);
+
+                ADP_TV_textFollowers.setText(String.valueOf(dog.getFollowers().size()));
+                ADP_TV_textFollowing.setText(String.valueOf(dog.getFollowing().size()));
+                if(isCurrentDogInList(dog.getFollowers())) {
+                    ADP_MB_FollowMB.setText("Following");
+                    ADP_MB_FollowMB.setIconResource(R.drawable.check);
+                }
+                Call<List<Post>> PostsCall = postApiService.getPostsByDog(dog.getOwnerEmail(),dog.getName());
+                PostsCall.enqueue(new Callback<List<Post>>() {
+                    @Override
+                    public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                        if(response.body()!=null) {
+                            posts.clear();
+                            posts.addAll(response.body());
+                            postsAdapter.notifyDataSetChanged();
+                            ADP_TV_textPosts.setText(String.valueOf(response.body().size()));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Post>> call, Throwable throwable) {
+
+                    }
+                });
+
             }
 
             @Override
@@ -106,12 +146,79 @@ public class DogProfile extends AppCompatActivity {
             }
         });
 
+        ADP_MB_FollowMB.setOnClickListener(v -> {
+            if(ADP_MB_FollowMB.getText().toString().equals("Follow")){
+                Call<Boolean> followDogCall = dogApiService.followDog(ownerEmail,dogName,CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+                followDogCall.enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        if(response.body()){
+                            ADP_MB_FollowMB.setText("Following");
+                            ADP_MB_FollowMB.setIconResource(R.drawable.check);
+                            refreshCounters();
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable throwable) {
 
-        
+                    }
+                });
+            }
+            else{
+                Call<Boolean> unfollowDogCall = dogApiService.unfollowDog(ownerEmail,dogName,CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+                unfollowDogCall.enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        if(response.body()){
+                            ADP_MB_FollowMB.setText("Follow");
+                            ADP_MB_FollowMB.setIconResource(R.drawable.follow_icon);
+                            refreshCounters();
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable throwable) {
 
+                    }
+                });
+            }
+        });
+    }
 
+    private boolean isCurrentDogInList(List<String> followers){
+        String currentDogId = CurrentDogManager.getInstance().getDog().getOwnerEmail() + "#" + CurrentDogManager.getInstance().getDog().getName();
+        return followers.contains(currentDogId);
+    }
+
+    private void refreshCounters(){
+        Call<Dog> refreshDogCall = dogApiService.findDog(ownerEmail,dogName);
+        refreshDogCall.enqueue(new Callback<Dog>() {
+            @Override
+            public void onResponse(Call<Dog> call, Response<Dog> response) {
+                Dog dog = response.body();
+                ADP_TV_textFollowers.setText(String.valueOf(dog.getFollowers().size()));
+                ADP_TV_textFollowing.setText(String.valueOf(dog.getFollowing().size()));
+            }
+
+            @Override
+            public void onFailure(Call<Dog> call, Throwable throwable) {
+
+            }
+        });
+
+        Call<Dog> refreshCurrentDog = dogApiService.findDog(CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+        refreshCurrentDog.enqueue(new Callback<Dog>() {
+            @Override
+            public void onResponse(Call<Dog> call, Response<Dog> response) {
+                CurrentDogManager.getInstance().setDog(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Dog> call, Throwable throwable) {
+
+            }
+        });
 
     }
 
