@@ -46,6 +46,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.PostViewHold
         }else{
             Glide.with(holder.itemView.getContext()).load(post.getPictureUrl()).error(R.drawable.exclamation).into(holder.IP_IV_PostImage);
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            listener.OnPostSelected(post);
+        });
     }
 
     @Override

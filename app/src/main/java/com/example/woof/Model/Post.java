@@ -1,9 +1,10 @@
 package com.example.woof.Model;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-public class Post {
+public class Post implements Serializable {
     private String dogOwner;
     private String dogName;
     private String description;

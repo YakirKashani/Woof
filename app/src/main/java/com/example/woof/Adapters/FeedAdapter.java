@@ -58,7 +58,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
         } else{
             Glide.with(holder.itemView.getContext()).load(post.getPictureUrl()).error(R.drawable.exclamation).into(holder.post_image);
         }
-/*
+
         Call<Dog> dogCall = dogApiService.findDog(post.getDogOwner(), post.getDogName());
         dogCall.enqueue(new Callback<Dog>() {
             @Override
@@ -98,8 +98,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
 
             }
         });
-
- */
     }
 
     @Override

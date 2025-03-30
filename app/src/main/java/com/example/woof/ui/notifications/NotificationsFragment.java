@@ -20,6 +20,7 @@ import com.example.woof.Model.Post;
 import com.example.woof.R;
 import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.Singleton.CurrentUserManager;
+import com.example.woof.View.PostBottomSheet;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.PostApi;
 import com.example.woof.databinding.FragmentNotificationsBinding;
@@ -101,7 +102,9 @@ public class NotificationsFragment extends Fragment {
         FN_RV_Posts.setLayoutManager(new GridLayoutManager(getContext(),3));
 
         postsAdapter = new PostsAdapter(getContext(),posts, selectedPost -> {
-
+            // TODO: open bottom sheet fragment with the post
+            PostBottomSheet postBottomSheet = PostBottomSheet.newInstance(selectedPost, CurrentDogManager.getInstance().getDog().getPhotoURL(),CurrentUserManager.getInstance().getOwner().getPhotoURL());
+            postBottomSheet.show(getParentFragmentManager(),"postBottomSheet");
         });
         FN_RV_Posts.setAdapter(postsAdapter);
 
