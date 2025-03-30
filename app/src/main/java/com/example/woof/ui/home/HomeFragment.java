@@ -240,6 +240,8 @@ public class HomeFragment extends Fragment {
                  //   runOnUiThread(() -> Glide.with(SignUpActivity.this).load(imageURL).error(R.drawable.default_owner_picture).into(SignUp_IV_OwnerProfilePhoto));
                     post.setPictureUrl(imageURL);
                     SavePostInDB(post);
+                    FH_ET_PostDescription.setText("");
+                    FH_IV_UploadedImage.setVisibility(View.GONE);
                 }
                 else{
                     Toast.makeText(getContext(),"Upload failed", Toast.LENGTH_LONG).show();

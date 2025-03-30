@@ -1,5 +1,6 @@
 package com.example.woof.WoofBackend;
 
+import com.example.woof.Model.Comment;
 import com.example.woof.Model.NewPost;
 import com.example.woof.Model.Post;
 
@@ -21,4 +22,13 @@ public interface PostApi {
 
     @GET("post/feed/{ownerEmail}/{dogName}")
     Call<List<Post>> getPostsFromFollowedDogs(@Path("ownerEmail") String ownerEmail, @Path("dogName") String dogName);
+
+    @POST("post/{postId}/like/{ownerEmail}/{dogName}")
+    Call<Boolean> addLike(@Path("postId") Long postId, @Path("ownerEmail") String ownerEmail, @Path("dogName") String dogName);
+
+    @POST("post/{postId}/unlike/{ownerEmail}/{dogName}")
+    Call<Boolean> unlike(@Path("postId") Long postId, @Path("ownerEmail") String ownerEmail, @Path("dogName") String dogName);
+
+    @POST("post/{postId}/comment")
+    Call<Post> addComment(@Path("postId") Long postId, @Body Comment comment);
 }

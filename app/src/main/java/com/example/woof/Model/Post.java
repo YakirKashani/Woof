@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 public class Post implements Serializable {
+    private Long id;
     private String dogOwner;
     private String dogName;
     private String description;
@@ -14,6 +15,14 @@ public class Post implements Serializable {
     private List<Comment> comments;
 
     public Post() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDogOwner() {
@@ -75,7 +84,8 @@ public class Post implements Serializable {
     @Override
     public String toString() {
         return "Post{" +
-                "dogOwner='" + dogOwner + '\'' +
+                "id=" + id +
+                ", dogOwner='" + dogOwner + '\'' +
                 ", dogName='" + dogName + '\'' +
                 ", description='" + description + '\'' +
                 ", pictureUrl='" + pictureUrl + '\'' +

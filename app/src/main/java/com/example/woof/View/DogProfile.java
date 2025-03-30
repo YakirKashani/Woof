@@ -47,6 +47,7 @@ public class DogProfile extends AppCompatActivity {
     DogApi dogApiService = ApiController.getRetrofitInstance().create(DogApi.class);
     OwnerApi ownerApiService = ApiController.getRetrofitInstance().create(OwnerApi.class);
     PostApi postApiService = ApiController.getRetrofitInstance().create(PostApi.class);
+    private PostBottomSheet postBottomSheet;
 
 
     @Override
@@ -80,7 +81,9 @@ public class DogProfile extends AppCompatActivity {
         posts = new ArrayList<>();
         ADP_RV_Posts.setLayoutManager(new GridLayoutManager(this,3));
         postsAdapter = new PostsAdapter(this,posts,selectedPost -> {
-
+            // TODO: PostBottomSheet
+            postBottomSheet = PostBottomSheet.newInstance(selectedPost);
+            postBottomSheet.show(getSupportFragmentManager(),"postBottomSheet");
         });
         ADP_RV_Posts.setAdapter(postsAdapter);
 
@@ -94,9 +97,10 @@ public class DogProfile extends AppCompatActivity {
                 Dog dog = response.body();
                 if(dog.getPhotoURL() == null)
                     ADP_IV_DogPicture.setImageResource(R.drawable.default_dog_picture);
-                else
+                else {
                     Glide.with(DogProfile.this).load(dog.getPhotoURL()).error(R.drawable.default_dog_picture).into(ADP_IV_DogPicture);
-
+     //               postBottomSheet.setDogImage(dog.getPhotoURL());
+                }
                 ADP_TV_textFollowers.setText(String.valueOf(dog.getFollowers().size()));
                 ADP_TV_textFollowing.setText(String.valueOf(dog.getFollowing().size()));
                 if(isCurrentDogInList(dog.getFollowers())) {
@@ -136,8 +140,10 @@ public class DogProfile extends AppCompatActivity {
                 Owner owner = response.body();
                 if(owner.getPhotoURL() == null)
                     ADP_IV_OwnerPicture.setImageResource(R.drawable.default_owner_picture);
-                else
+                else {
                     Glide.with(DogProfile.this).load(owner.getPhotoURL()).error(R.drawable.default_owner_picture).into(ADP_IV_OwnerPicture);
+     //               postBottomSheet.setOwnerImage(owner.getPhotoURL());
+                }
             }
 
             @Override

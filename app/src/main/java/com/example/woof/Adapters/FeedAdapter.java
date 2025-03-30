@@ -15,9 +15,11 @@ import com.example.woof.Model.Dog;
 import com.example.woof.Model.Owner;
 import com.example.woof.Model.Post;
 import com.example.woof.R;
+import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.DogApi;
 import com.example.woof.WoofBackend.OwnerApi;
+import com.example.woof.WoofBackend.PostApi;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -32,6 +34,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
     private List<Post> posts;
     DogApi dogApiService = ApiController.getRetrofitInstance().create(DogApi.class);
     OwnerApi ownerApiService = ApiController.getRetrofitInstance().create(OwnerApi.class);
+    PostApi postApiService = ApiController.getRetrofitInstance().create(PostApi.class);
 
     public FeedAdapter(Context context, List<Post> posts){
         this.context = context;
@@ -58,6 +61,51 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
         } else{
             Glide.with(holder.itemView.getContext()).load(post.getPictureUrl()).error(R.drawable.exclamation).into(holder.post_image);
         }
+
+        if(post.getDogsLiked().contains(CurrentDogManager.getInstance().getDog().getOwnerEmail() +"#" + CurrentDogManager.getInstance().getDog().getName()))
+            holder.post_SIV_like.setImageResource(R.drawable.paw_heart_full);
+        else
+            holder.post_SIV_like.setImageResource(R.drawable.paw_heart);
+
+        holder.post_SIV_like.setOnClickListener(v -> {
+            if(post.getDogsLiked().contains(CurrentDogManager.getInstance().getDog().getOwnerEmail() +"#" + CurrentDogManager.getInstance().getDog().getName())) {
+                Call<Boolean> unlikeCall = postApiService.unlike(post.getId(),CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+                unlikeCall.enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        if(response.body()){
+                            holder.post_SIV_like.setImageResource(R.drawable.paw_heart);
+                            post.getDogsLiked().remove(CurrentDogManager.getInstance().getDog().getOwnerEmail() +"#" + CurrentDogManager.getInstance().getDog().getName());
+                            notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable throwable) {
+
+                    }
+                });
+            } else{
+                Call<Boolean> likeCall = postApiService.addLike(post.getId(),CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+                likeCall.enqueue(new Callback<Boolean>() {
+                    @Override
+                    public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                        if(response.body()){
+                            holder.post_SIV_like.setImageResource(R.drawable.paw_heart_full);
+                            post.getDogsLiked().add(CurrentDogManager.getInstance().getDog().getOwnerEmail() +"#" + CurrentDogManager.getInstance().getDog().getName());
+                            notifyDataSetChanged();
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Boolean> call, Throwable throwable) {
+
+                    }
+                });
+
+            }
+        });
 
         Call<Dog> dogCall = dogApiService.findDog(post.getDogOwner(), post.getDogName());
         dogCall.enqueue(new Callback<Dog>() {
@@ -111,6 +159,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
         private ImageView post_SIV_ownerPhoto;
         private ShapeableImageView post_image;
         private MaterialTextView post_description;
+        private ShapeableImageView post_SIV_like;
+        private ShapeableImageView post_SIV_comment;
 
         public FeddViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -119,6 +169,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
             post_SIV_ownerPhoto = itemView.findViewById(R.id.post_SIV_ownerPhoto);
             post_image = itemView.findViewById(R.id.post_image);
             post_description = itemView.findViewById(R.id.post_description);
+            post_SIV_like = itemView.findViewById(R.id.post_SIV_like);
+            post_SIV_comment = itemView.findViewById(R.id.post_SIV_comment);
         }
     }
 }
