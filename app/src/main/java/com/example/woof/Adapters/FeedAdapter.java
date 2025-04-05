@@ -32,13 +32,19 @@ import retrofit2.Response;
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder>{
     private Context context;
     private List<Post> posts;
+    private OnCommentSelectedListener listener;
     DogApi dogApiService = ApiController.getRetrofitInstance().create(DogApi.class);
     OwnerApi ownerApiService = ApiController.getRetrofitInstance().create(OwnerApi.class);
     PostApi postApiService = ApiController.getRetrofitInstance().create(PostApi.class);
 
-    public FeedAdapter(Context context, List<Post> posts){
+    public interface OnCommentSelectedListener{
+        void OnCommentSelected(Post post);
+    }
+
+    public FeedAdapter(Context context, List<Post> posts,OnCommentSelectedListener listener){
         this.context = context;
         this.posts = posts;
+        this.listener = listener;
     }
 
     @NonNull
@@ -56,26 +62,26 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
 
         holder.post_description.setText(post.getDescription());
 
-        if(post.getPictureUrl() == null){
+        if (post.getPictureUrl() == null) {
             holder.post_image.setImageResource(R.drawable.exclamation);
-        } else{
+        } else {
             Glide.with(holder.itemView.getContext()).load(post.getPictureUrl()).error(R.drawable.exclamation).into(holder.post_image);
         }
 
-        if(post.getDogsLiked().contains(CurrentDogManager.getInstance().getDog().getOwnerEmail() +"#" + CurrentDogManager.getInstance().getDog().getName()))
+        if (post.getDogsLiked().contains(CurrentDogManager.getInstance().getDog().getOwnerEmail() + "#" + CurrentDogManager.getInstance().getDog().getName()))
             holder.post_SIV_like.setImageResource(R.drawable.paw_heart_full);
         else
             holder.post_SIV_like.setImageResource(R.drawable.paw_heart);
 
         holder.post_SIV_like.setOnClickListener(v -> {
-            if(post.getDogsLiked().contains(CurrentDogManager.getInstance().getDog().getOwnerEmail() +"#" + CurrentDogManager.getInstance().getDog().getName())) {
-                Call<Boolean> unlikeCall = postApiService.unlike(post.getId(),CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+            if (post.getDogsLiked().contains(CurrentDogManager.getInstance().getDog().getOwnerEmail() + "#" + CurrentDogManager.getInstance().getDog().getName())) {
+                Call<Boolean> unlikeCall = postApiService.unlike(post.getId(), CurrentDogManager.getInstance().getDog().getOwnerEmail(), CurrentDogManager.getInstance().getDog().getName());
                 unlikeCall.enqueue(new Callback<Boolean>() {
                     @Override
                     public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                        if(response.body()){
+                        if (response.body()) {
                             holder.post_SIV_like.setImageResource(R.drawable.paw_heart);
-                            post.getDogsLiked().remove(CurrentDogManager.getInstance().getDog().getOwnerEmail() +"#" + CurrentDogManager.getInstance().getDog().getName());
+                            post.getDogsLiked().remove(CurrentDogManager.getInstance().getDog().getOwnerEmail() + "#" + CurrentDogManager.getInstance().getDog().getName());
                             notifyDataSetChanged();
                         }
                     }
@@ -85,14 +91,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
 
                     }
                 });
-            } else{
-                Call<Boolean> likeCall = postApiService.addLike(post.getId(),CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+            } else {
+                Call<Boolean> likeCall = postApiService.addLike(post.getId(), CurrentDogManager.getInstance().getDog().getOwnerEmail(), CurrentDogManager.getInstance().getDog().getName());
                 likeCall.enqueue(new Callback<Boolean>() {
                     @Override
                     public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                        if(response.body()){
+                        if (response.body()) {
                             holder.post_SIV_like.setImageResource(R.drawable.paw_heart_full);
-                            post.getDogsLiked().add(CurrentDogManager.getInstance().getDog().getOwnerEmail() +"#" + CurrentDogManager.getInstance().getDog().getName());
+                            post.getDogsLiked().add(CurrentDogManager.getInstance().getDog().getOwnerEmail() + "#" + CurrentDogManager.getInstance().getDog().getName());
                             notifyDataSetChanged();
 
                         }
@@ -112,10 +118,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
             @Override
             public void onResponse(Call<Dog> call, Response<Dog> response) {
                 Dog dog = response.body();
-                if(dog!=null){
-                    if(dog.getPhotoURL()==null){
+                if (dog != null) {
+                    if (dog.getPhotoURL() == null) {
                         holder.post_SIV_dogPhoto.setImageResource(R.drawable.default_dog_picture);
-                    } else{
+                    } else {
                         Glide.with(holder.itemView.getContext()).load(dog.getPhotoURL()).error(R.drawable.default_dog_picture).into(holder.post_SIV_dogPhoto);
                     }
                 }
@@ -132,10 +138,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
             @Override
             public void onResponse(Call<Owner> call, Response<Owner> response) {
                 Owner owner = response.body();
-                if(owner!=null){
-                    if(owner.getPhotoURL()==null){
-                        holder.post_SIV_ownerPhoto.setImageResource(R.drawable.default_owner_picture);;
-                    } else{
+                if (owner != null) {
+                    if (owner.getPhotoURL() == null) {
+                        holder.post_SIV_ownerPhoto.setImageResource(R.drawable.default_owner_picture);
+                        ;
+                    } else {
                         Glide.with(holder.itemView.getContext()).load(owner.getPhotoURL()).error(R.drawable.default_owner_picture).into(holder.post_SIV_ownerPhoto);
                     }
                 }
@@ -146,7 +153,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
 
             }
         });
+        holder.post_SIV_comment.setOnClickListener(v -> {
+            listener.OnCommentSelected(post);
+        });
     }
+
+
+
+
 
     @Override
     public int getItemCount() {

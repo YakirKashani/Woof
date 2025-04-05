@@ -24,8 +24,8 @@
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
-        android:id="@+id/navigation_community"
-        android:name="com.example.woof.ui.CommunityFragment"
+        android:id="@+id/navigation_medical"
+        android:name="com.example.woof.ui.MedicalFragment"
         android:label="Community"
-        tools:layout="@layout/fragment_community" />
+        tools:layout="@layout/fragment_medical" />
 </navigation>

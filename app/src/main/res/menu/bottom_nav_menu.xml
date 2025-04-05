@@ -15,7 +15,7 @@
         android:enabled="false"
         android:title="" />
     <item
-        android:id="@+id/navigation_community"
+        android:id="@+id/navigation_medical"
         android:icon="@drawable/baseline_vaccines_24"
         android:title="Medical" />
 

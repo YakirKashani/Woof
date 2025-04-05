@@ -23,4 +23,8 @@
     <color name="woof_background">#E0DED9</color>
     <color name="woof_second">#889E73</color>
 
+    <color name="gray">#949593</color>
+    <color name="transparent">#FFFFFF</color>
+
+
 </resources>

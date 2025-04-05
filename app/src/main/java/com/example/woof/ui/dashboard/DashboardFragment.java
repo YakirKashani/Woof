@@ -73,6 +73,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void initViews(){
+        searchText = "";
         dogs = new ArrayList<>();
         owners = new ArrayList<>();
         Dashboard_TL_TabLayout.getTabAt(0).select();
@@ -179,7 +180,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void fetchOwners(String ownerName){
-        if(ownerName == ""){
+        if(ownerName.equals("")){
             owners.clear();
             ownersAdapter.notifyDataSetChanged();
             return;

@@ -82,7 +82,7 @@ public class DogProfile extends AppCompatActivity {
         ADP_RV_Posts.setLayoutManager(new GridLayoutManager(this,3));
         postsAdapter = new PostsAdapter(this,posts,selectedPost -> {
             // TODO: PostBottomSheet
-            postBottomSheet = PostBottomSheet.newInstance(selectedPost);
+            postBottomSheet = PostBottomSheet.newInstance(selectedPost,true);
             postBottomSheet.show(getSupportFragmentManager(),"postBottomSheet");
         });
         ADP_RV_Posts.setAdapter(postsAdapter);

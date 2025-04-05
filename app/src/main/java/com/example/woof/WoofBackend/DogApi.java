@@ -1,7 +1,9 @@
 package com.example.woof.WoofBackend;
 
 import com.example.woof.Model.Dog;
+import com.example.woof.Model.Medicine;
 import com.example.woof.Model.NewDog;
+import com.example.woof.Model.Vaccine;
 
 import java.util.List;
 
@@ -48,4 +50,44 @@ public interface DogApi {
             @Path("followingOwnerEmail") String followingOwnerEmail,
             @Path("followingDogName") String followingDogName
     );
+
+    @POST("dog/vaccines/{ownerEmail}/{dogName}")
+    Call<Void> addNewVaccine(@Path("ownerEmail") String ownerEmail, @Path("dogName") String dogName, @Body Vaccine vaccine);
+
+    @GET("dog/vaccines/{ownerEmail}/{dogName}/{day}/{month}/{year}")
+    Call<List<Vaccine>> getVaccinesByDate(@Path("ownerEmail") String ownerEmail,
+                                         @Path("dogName") String dogName,
+                                         @Path("day") String day,
+                                         @Path("month") String month,
+                                         @Path("year") String year);
+
+    @POST("dog/medicines/{ownerEmail}/{dogName}")
+    Call<Void> addNewMedicine(@Path("ownerEmail") String ownerEmail, @Path("dogName") String dogName, @Body Medicine medicine);
+
+    @GET("dog/medicines/{ownerEmail}/{dogName}/{day}/{month}/{year}")
+    Call<List<Medicine>> getMedicinesByDate(@Path("ownerEmail") String ownerEmail,
+                                            @Path("dogName") String dogName,
+                                            @Path("day") String day,
+                                            @Path("month") String month,
+                                            @Path("year") String year);
+
+
+    @GET("dog/medicines/{ownerEmail}/{dogName}/{month}/{year}")
+    Call<List<Medicine>> getMedicinesByMonthAndYear(@Path("ownerEmail") String ownerEmail,
+                                            @Path("dogName") String dogName,
+                                            @Path("month") String month,
+                                            @Path("year") String year);
+
+    @GET("dog/vaccines/{ownerEmail}/{dogName}/{month}/{year}")
+    Call<List<Vaccine>> getVaccinesByMonthAndYear(@Path("ownerEmail") String ownerEmail,
+                                         @Path("dogName") String dogName,
+                                         @Path("month") String month,
+                                         @Path("year") String year);
+
+
+
+
+
+
+
 }

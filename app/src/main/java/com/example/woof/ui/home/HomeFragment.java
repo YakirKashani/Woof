@@ -40,6 +40,7 @@ import com.example.woof.Singleton.CloudinaryManager;
 import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.Singleton.CurrentUserManager;
 import com.example.woof.View.MainActivity;
+import com.example.woof.View.PostBottomSheet;
 import com.example.woof.View.SignUpActivity;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.DogApi;
@@ -175,7 +176,11 @@ public class HomeFragment extends Fragment {
 
         // TODO: 4. fetch posts
         FH_RV_Posts.setLayoutManager(new LinearLayoutManager(getContext()));
-        feedAdapter = new FeedAdapter(getContext(),posts);
+        feedAdapter = new FeedAdapter(getContext(),posts, selectedPost -> {
+            // TODO: open bottom sheet fragment with the post
+            PostBottomSheet postBottomSheet = PostBottomSheet.newInstance(selectedPost,false);
+            postBottomSheet.show(getParentFragmentManager(),"postBottomSheet");
+        });
         FH_RV_Posts.setAdapter(feedAdapter);
         fetchPosts();
     }

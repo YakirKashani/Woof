@@ -53,12 +53,14 @@ public class PostBottomSheet extends BottomSheetDialogFragment {
     private EditText PBSL_ET_Comment;
     private ShapeableImageView PBSL_SIV_PostComment;
     private RecyclerView PBSL_RV_Comments;
+    private boolean likesApeerance;
 
 
-    public static PostBottomSheet newInstance(Post post) {
+    public static PostBottomSheet newInstance(Post post, boolean likesApeerance) {
         PostBottomSheet fragment = new PostBottomSheet();
         Bundle args = new Bundle();
         args.putSerializable(ARG_POST, post);
+        args.putBoolean("likesApeerance", likesApeerance);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,7 +82,7 @@ public class PostBottomSheet extends BottomSheetDialogFragment {
 
         if (getArguments() != null) {
             post = (Post) getArguments().getSerializable(ARG_POST);
-
+            likesApeerance = getArguments().getBoolean("likesApeerance");
         }
         PBSL_SIV_dogPhoto = view.findViewById(R.id.PBSL_SIV_dogPhoto);
         PBSL_TV_dogName = view.findViewById(R.id.PBSL_TV_dogName);
@@ -96,6 +98,11 @@ public class PostBottomSheet extends BottomSheetDialogFragment {
         PBSL_RV_Comments.setAdapter(commentsAdapter);
         PBSL_RV_Comments.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        if(likesApeerance){
+            PBSL_SIV_like.setVisibility(View.VISIBLE);
+        } else {
+            PBSL_SIV_like.setVisibility(View.GONE);
+        }
 
         PBSL_SIV_PostComment.setOnClickListener(v -> {
             String commentText = PBSL_ET_Comment.getText().toString().trim();

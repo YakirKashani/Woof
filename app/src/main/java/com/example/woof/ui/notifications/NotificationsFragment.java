@@ -103,7 +103,7 @@ public class NotificationsFragment extends Fragment {
 
         postsAdapter = new PostsAdapter(getContext(),posts, selectedPost -> {
             // TODO: open bottom sheet fragment with the post
-            PostBottomSheet postBottomSheet = PostBottomSheet.newInstance(selectedPost);
+            PostBottomSheet postBottomSheet = PostBottomSheet.newInstance(selectedPost,true);
             postBottomSheet.show(getParentFragmentManager(),"postBottomSheet");
         });
         FN_RV_Posts.setAdapter(postsAdapter);
