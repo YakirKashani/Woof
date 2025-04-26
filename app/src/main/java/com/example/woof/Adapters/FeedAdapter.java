@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.woof.Model.Dog;
+import com.example.woof.Model.Notification;
 import com.example.woof.Model.Owner;
 import com.example.woof.Model.Post;
 import com.example.woof.R;
@@ -99,6 +100,21 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeddViewHolder
                         if (response.body()) {
                             holder.post_SIV_like.setImageResource(R.drawable.paw_heart_full);
                             post.getDogsLiked().add(CurrentDogManager.getInstance().getDog().getOwnerEmail() + "#" + CurrentDogManager.getInstance().getDog().getName());
+                            Notification notification = new Notification(CurrentDogManager.getInstance().getDog().getOwnerEmail(),
+                                    CurrentDogManager.getInstance().getDog().getName(),
+                                    "liked your post",
+                                    post.getPictureUrl(),
+                                    true);
+                            Call<Void> addNotificationCall = dogApiService.addNewNotification(post.getDogOwner(), post.getDogName(),notification);
+                            addNotificationCall.enqueue(new Callback<Void>() {
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                }
+
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable throwable) {
+                                }
+                            });
                             notifyDataSetChanged();
 
                         }

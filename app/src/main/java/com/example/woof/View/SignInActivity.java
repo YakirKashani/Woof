@@ -9,9 +9,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.woof.Model.Dog;
 import com.example.woof.Model.Owner;
 import com.example.woof.R;
+import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.Singleton.CurrentUserManager;
+import com.example.woof.Singleton.SharedPreferencesHelper;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.OwnerApi;
 import com.google.android.material.button.MaterialButton;
@@ -32,8 +35,30 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        setContent();
         findViews();
         initViews();
+    }
+
+    private void setContent(){
+        SharedPreferencesHelper prefs = new SharedPreferencesHelper(this);
+        Owner owner = prefs.getOwner();
+        Dog dog = prefs.getDog();
+
+        if(owner == null){
+            setContentView(R.layout.activity_sign_in);
+        } else{
+            CurrentUserManager.getInstance().setOwner(owner);
+            if(dog == null){
+                Intent intent = new Intent(SignInActivity.this,ChooseDogActivity.class);
+                startActivity(intent);
+            } else{
+                CurrentDogManager.getInstance().setDog(dog);
+                Intent intent = new Intent(SignInActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
+            finish();
+        }
     }
 
     private void findViews() {
@@ -56,6 +81,8 @@ public class SignInActivity extends AppCompatActivity {
                 Owner owner = response.body();
                 if(response.isSuccessful() && owner!=null){
                     CurrentUserManager.getInstance().setOwner(owner);
+                    SharedPreferencesHelper prefs = new SharedPreferencesHelper(SignInActivity.this);
+                    prefs.saveOwner(owner);
                     Toast.makeText(SignInActivity.this,"Hello " + owner.getMail(),Toast.LENGTH_LONG).show();
                     SwitchToChooseDogActivity();
                 }

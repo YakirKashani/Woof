@@ -5,7 +5,6 @@ import com.example.woof.Model.Owner;
 public class CurrentUserManager {
     private static CurrentUserManager instance;
     private Owner owner;
-    public final String defaultOwnerPicture = "https://res.cloudinary.com/dhefmhtya/image/upload/v1742553178/dppaivmuxdyxw6tp2v0n.png";
 
 
     private CurrentUserManager(){

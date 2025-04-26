@@ -52,11 +52,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             int day = Integer.parseInt(dayText);
             LocalDate cellDate = selectedMonth.withDayOfMonth(day);
             DayEvent event = dayEvents.get(cellDate);
-
+            holder.itemView.setOnClickListener(v -> onItemListener.onItemClick(position, dayText,cellDate));
             if(event != null){
                 holder.CC_SIV_Medicine.setVisibility(event.hasMedicine() ? View.VISIBLE : View.GONE);
                 holder.CC_SIV_Vaccine.setVisibility(event.hasVaccine() ? View.VISIBLE : View.GONE);
-                holder.itemView.setOnClickListener(v -> onItemListener.onItemClick(position, dayText,cellDate));
             } else{
                 holder.CC_SIV_Medicine.setVisibility(View.GONE);
                 holder.CC_SIV_Vaccine.setVisibility(View.GONE);

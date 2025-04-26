@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.woof.Adapters.CommentsAdapter;
 import com.example.woof.Model.Comment;
 import com.example.woof.Model.Dog;
+import com.example.woof.Model.Notification;
 import com.example.woof.Model.Owner;
 import com.example.woof.Model.Post;
 import com.example.woof.R;
@@ -116,8 +117,22 @@ public class PostBottomSheet extends BottomSheetDialogFragment {
                     @Override
                     public void onResponse(Call<Post> call, Response<Post> response) {
                         if(response.isSuccessful()){
-                            // TODO: refresh the post
                             refreshPost(response.body());
+                            Notification notification = new Notification(CurrentDogManager.getInstance().getDog().getOwnerEmail(),
+                                    CurrentDogManager.getInstance().getDog().getName(),
+                                    "commented on your post",
+                                    post.getPictureUrl(),
+                                    true);
+                            Call<Void> addNotificationCall = dogApiService.addNewNotification(post.getDogOwner(), post.getDogName(),notification);
+                            addNotificationCall.enqueue(new Callback<Void>() {
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                }
+
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable throwable) {
+                                }
+                            });
                         }
                     }
 
@@ -206,6 +221,21 @@ public class PostBottomSheet extends BottomSheetDialogFragment {
                             if (response.body()) {
                                 Glide.with(PostBottomSheet.this).load(R.drawable.paw_heart_full).into(PBSL_SIV_like);
                                 isLiked = true;
+                                Notification notification = new Notification(CurrentDogManager.getInstance().getDog().getOwnerEmail(),
+                                        CurrentDogManager.getInstance().getDog().getName(),
+                                        "liked your post",
+                                        post.getPictureUrl(),
+                                        true);
+                                Call<Void> addNotificationCall = dogApiService.addNewNotification(post.getDogOwner(), post.getDogName(),notification);
+                                addNotificationCall.enqueue(new Callback<Void>() {
+                                    @Override
+                                    public void onResponse(Call<Void> call, Response<Void> response) {
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Void> call, Throwable throwable) {
+                                    }
+                                });
                             }
                         }
 
@@ -216,11 +246,7 @@ public class PostBottomSheet extends BottomSheetDialogFragment {
                     });
 
                 }
-
-
             });
-
-
         }
         if (dogImage != null) {
             Glide.with(this).load(dogImage).error(R.drawable.default_dog_picture).into(PBSL_SIV_dogPhoto);
@@ -233,7 +259,6 @@ public class PostBottomSheet extends BottomSheetDialogFragment {
         } else {
             PBSL_SIV_ownerPhoto.setImageResource(R.drawable.default_owner_picture);
         }
-
         return view;
     }
 

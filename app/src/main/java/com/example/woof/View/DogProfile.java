@@ -2,6 +2,7 @@ package com.example.woof.View;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.woof.Adapters.PostsAdapter;
 import com.example.woof.Model.Dog;
+import com.example.woof.Model.Notification;
 import com.example.woof.Model.Owner;
 import com.example.woof.Model.Post;
 import com.example.woof.R;
@@ -162,6 +164,23 @@ public class DogProfile extends AppCompatActivity {
                             ADP_MB_FollowMB.setText("Following");
                             ADP_MB_FollowMB.setIconResource(R.drawable.check);
                             refreshCounters();
+                            Log.e("notification",CurrentDogManager.getInstance().getDog().getOwnerEmail() + "#" + CurrentDogManager.getInstance().getDog().getName());
+                            Notification notification = new Notification(CurrentDogManager.getInstance().getDog().getOwnerEmail(),
+                                    CurrentDogManager.getInstance().getDog().getName(),
+                                    "started following you",
+                                    "New follower",
+                                    true);
+                            Log.e("notification",notification.toString());
+                            Call<Void> addNotificationCall = dogApiService.addNewNotification(ownerEmail, dogName,notification);
+                            addNotificationCall.enqueue(new Callback<Void>() {
+                                @Override
+                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                }
+
+                                @Override
+                                public void onFailure(Call<Void> call, Throwable throwable) {
+                                }
+                            });
                         }
                     }
 

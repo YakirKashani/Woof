@@ -6,7 +6,6 @@ import com.example.woof.Model.NewDog;
 public class CurrentDogManager {
     private static CurrentDogManager instance;
     private Dog dog;
-    public final String defaultDogPicture = "https://res.cloudinary.com/dhefmhtya/image/upload/v1742553178/axepyphrnvbfvaqzcaco.png";
 
     private CurrentDogManager(){
 

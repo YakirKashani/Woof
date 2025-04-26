@@ -3,35 +3,46 @@ package com.example.woof.ui;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.dogbreedslib.DogData;
+import com.example.dogbreedslib.DogModel;
 import com.example.woof.Adapters.CalendarAdapter;
+import com.example.woof.Adapters.MedicinesViewAdapter;
+import com.example.woof.Adapters.VaccinesViewAdapter;
 import com.example.woof.Model.DayEvent;
 import com.example.woof.Model.Medicine;
 import com.example.woof.Model.Vaccine;
 import com.example.woof.R;
 import com.example.woof.Singleton.CurrentDogManager;
+import com.example.woof.Utils.DogWeightScaleView;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.DogApi;
 import com.example.woof.databinding.FragmentMedicalBinding;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -57,6 +68,10 @@ public class MedicalFragment extends Fragment {
     private Button FM_Button_addSchedule;
     int year,month,day;
     DogApi dogApiService = ApiController.getRetrofitInstance().create(DogApi.class);
+    DogWeightScaleView dogWeightScaleView;
+    private MaterialTextView FM_MTV_StatusText;
+    private ShapeableImageView FM_SIV_StatusIcon;
+    private Button FM_Button_updateWeight;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +81,8 @@ public class MedicalFragment extends Fragment {
         findViews();
         calendarSetup();
         FM_Button_addSchedule.setOnClickListener(v -> showAddScheduleBottomSheet());
+        FM_Button_updateWeight.setOnClickListener(v -> showUpdateWeightBottomSheet());
+        setWeightScale();
         return root;
     }
 
@@ -75,6 +92,10 @@ public class MedicalFragment extends Fragment {
         FM_SIV_nextMonth = binding.getRoot().findViewById(R.id.FM_SIV_nextMonth);
         GM_RV_calendarRecyclerView = binding.getRoot().findViewById(R.id.GM_RV_calendarRecyclerView);
         FM_Button_addSchedule = binding.getRoot().findViewById(R.id.FM_Button_addSchedule);
+        dogWeightScaleView = binding.getRoot().findViewById(R.id.dogWeightScaleView);
+        FM_MTV_StatusText = binding.getRoot().findViewById(R.id.FM_MTV_StatusText);
+        FM_SIV_StatusIcon = binding.getRoot().findViewById(R.id.FM_SIV_StatusIcon);
+        FM_Button_updateWeight = binding.getRoot().findViewById(R.id.FM_Button_updateWeight);
     }
 
     private void calendarSetup(){
@@ -87,7 +108,76 @@ public class MedicalFragment extends Fragment {
     }
 
     private void showBottomSheetForDate(LocalDate date){
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.bottom_sheet_view_schedule, null);
+        bottomSheetDialog.setContentView(view);
 
+        MaterialTextView BSVS_MTV_Date = view.findViewById(R.id.BSVS_MTV_Date);
+        RecyclerView BSVS_RV_Vaccines = view.findViewById(R.id.BSVS_RV_Vaccines);
+        RecyclerView BSVS_RV_Medicines = view.findViewById(R.id.BSVS_RV_Medicines);
+
+        String formattedDate = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        BSVS_MTV_Date.setText(formattedDate);
+
+        BSVS_RV_Vaccines.setLayoutManager(new LinearLayoutManager(getContext()));
+        BSVS_RV_Medicines.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        String day = String.valueOf(date.getDayOfMonth());
+        String month = String.format("%02d", date.getMonthValue());
+        String year = String.valueOf(date.getYear());
+
+        String email = CurrentDogManager.getInstance().getDog().getOwnerEmail();
+        String name = CurrentDogManager.getInstance().getDog().getName();
+
+        VaccinesViewAdapter vaccinesViewAdapter = new VaccinesViewAdapter(getContext(), new ArrayList<>());
+        MedicinesViewAdapter medicinesViewAdapter = new MedicinesViewAdapter(getContext(), new ArrayList<>());
+
+        BSVS_RV_Vaccines.setAdapter(vaccinesViewAdapter);
+        BSVS_RV_Medicines.setAdapter(medicinesViewAdapter);
+
+        Call<List<Vaccine>> VaccineCall = dogApiService.getVaccinesByDate(email, name, day, month, year);
+        VaccineCall.enqueue(new Callback<List<Vaccine>>() {
+            @Override
+            public void onResponse(Call<List<Vaccine>> call, Response<List<Vaccine>> response) {
+                if(response.isSuccessful()){
+                    List<Vaccine> vaccines = response.body();
+                    if(vaccines != null){
+                      //  BSVS_RV_Vaccines.setAdapter(new VaccinesViewAdapter(getContext(), vaccines));
+                        vaccinesViewAdapter.setVaccines(vaccines);
+                       // vaccinesViewAdapter.notifyDataSetChanged();
+                    }
+                }
+                else {
+                    Log.e("Medical fragment", "Error getting vaccines: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Vaccine>> call, Throwable throwable) {
+                Log.e("Medical fragment", "Error getting vaccines: " + throwable.getMessage());
+            }
+        });
+
+        Call<List<Medicine>> MedicineCall = dogApiService.getMedicinesByDate(email, name, day, month, year);
+        MedicineCall.enqueue(new Callback<List<Medicine>>() {
+            @Override
+            public void onResponse(Call<List<Medicine>> call, Response<List<Medicine>> response) {
+                if(response.isSuccessful()) {
+                    List<Medicine> medicines = response.body();
+                    if (medicines != null) {
+                        medicinesViewAdapter.setMedicines(medicines);
+                    //    medicinesViewAdapter.notifyDataSetChanged();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Medicine>> call, Throwable throwable) {
+                Log.e("Medical fragment", "Error getting medicines: " + throwable.getMessage());
+            }
+        });
+        bottomSheetDialog.show();
     }
 
     private void setMonthView(Map<LocalDate, DayEvent> eventMap){
@@ -148,12 +238,30 @@ public class MedicalFragment extends Fragment {
         Spinner BSAS_Spinner_Type = view.findViewById(R.id.BSAS_Spinner_Type);
         TextInputEditText BSAS_TIET_Description = view.findViewById(R.id.BSAS_TIET_Description);
         TextInputEditText BSAS_TIET_Date = view.findViewById(R.id.BSAS_TIET_Date);
+        TextInputEditText BSAS_TIET_Amount = view.findViewById(R.id.BSAS_TIET_Amount);
         Button BSAS_Button_Save = view.findViewById(R.id.BSAS_Button_Save);
 
         String[] types = {"Medicine", "Vaccine"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, types);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         BSAS_Spinner_Type.setAdapter(adapter);
+
+        BSAS_Spinner_Type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedType = types [position];
+                if(selectedType.equals("Vaccine")){
+                    BSAS_TIET_Amount.setVisibility(View.GONE);
+                } else{
+                    BSAS_TIET_Amount.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         BSAS_TIET_Date.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
@@ -173,12 +281,20 @@ public class MedicalFragment extends Fragment {
             String type = BSAS_Spinner_Type.getSelectedItem().toString();
             String description = BSAS_TIET_Description.getText().toString();
             String date = BSAS_TIET_Date.getText().toString();
+            String amountStr= BSAS_TIET_Amount.getText() != null ? BSAS_TIET_Amount.getText().toString() : "";
             int amount = 0;
             int duration = 0;
 
-            if(type.isEmpty() || description.isEmpty() || date.isEmpty()){
+            if(type.isEmpty() || description.isEmpty() || date.isEmpty() || (type.equals("Medicine") && amountStr.isEmpty())){
                 Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
             } else{
+
+                try {
+                    amount = Integer.parseInt(amountStr);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Log.e("Medical fragment", "Type: " + type + " Description: " + description + " Date: " + date);
 
                 if(type.equals("Vaccine")) {
@@ -285,6 +401,125 @@ public class MedicalFragment extends Fragment {
 
             }
         });
+    }
+
+    private void setWeightScale(){
+        int dogAge = calculateAge();
+        if(dogAge!= -1) {
+            String dogAgeStr = String.valueOf(dogAge);
+            String dogBreed =  CurrentDogManager.getInstance().getDog().getBreed();
+            String dogGender = CurrentDogManager.getInstance().getDog().getGender();
+            Log.e("Weight scale", dogBreed + " " + dogGender + " " + dogAgeStr);
+            DogData.getDogByBreedGenderAge(getContext(), dogBreed, dogGender, dogAgeStr, new DogData.Callback_Data<DogModel>() {
+                @Override
+                public void data(DogModel value) {
+                    if(value!=null) {
+                        Log.e("Weight scale", value.getAvg_weight_min() + " " + value.getAvg_weight_max());
+                        if(CurrentDogManager.getInstance().getDog().getWeight() <= Float.parseFloat(value.getAvg_weight_max()))
+                            dogWeightScaleView.setWeights(Float.parseFloat(value.getAvg_weight_min()),
+                                    Float.parseFloat(value.getAvg_weight_max()),
+                                    CurrentDogManager.getInstance().getDog().getWeight(),
+                                    Float.parseFloat(value.getAvg_weight_max()) + 5f);
+                        else
+                            dogWeightScaleView.setWeights(Float.parseFloat(value.getAvg_weight_min()),
+                                    Float.parseFloat(value.getAvg_weight_max()),
+                                    CurrentDogManager.getInstance().getDog().getWeight(),
+                                    CurrentDogManager.getInstance().getDog().getWeight() + 5f);
+
+                        if(CurrentDogManager.getInstance().getDog().getWeight() <= Float.parseFloat(value.getAvg_weight_max()) && CurrentDogManager.getInstance().getDog().getWeight() >= Float.parseFloat(value.getAvg_weight_min())){
+                            FM_MTV_StatusText.setText(CurrentDogManager.getInstance().getDog().getName() + " weight is ok!");
+                            FM_MTV_StatusText.setTextColor(ContextCompat.getColor(requireContext(),R.color.green));
+                            FM_SIV_StatusIcon.setImageResource(R.drawable.good);
+                            FM_SIV_StatusIcon.setColorFilter(ContextCompat.getColor(requireContext(),R.color.green));
+                        } else if (CurrentDogManager.getInstance().getDog().getWeight() > Float.parseFloat(value.getAvg_weight_max())) {
+                            FM_MTV_StatusText.setText(CurrentDogManager.getInstance().getDog().getName() + " is overweighted!");
+                            FM_MTV_StatusText.setTextColor(ContextCompat.getColor(requireContext(),R.color.green));
+                            FM_SIV_StatusIcon.setImageResource(R.drawable.danger);
+                            FM_SIV_StatusIcon.setColorFilter(ContextCompat.getColor(requireContext(),R.color.red));
+                        } else{
+                            FM_MTV_StatusText.setText(CurrentDogManager.getInstance().getDog().getName() + " is underweighted!");
+                            FM_MTV_StatusText.setTextColor(ContextCompat.getColor(requireContext(),R.color.green));
+                            FM_SIV_StatusIcon.setImageResource(R.drawable.danger);
+                            FM_SIV_StatusIcon.setColorFilter(ContextCompat.getColor(requireContext(),R.color.red));
+                        }
+
+                    }
+                    else{
+                        FM_MTV_StatusText.setText("Unable to retrieve breed data");
+                        FM_MTV_StatusText.setTextColor(ContextCompat.getColor(requireContext(),R.color.red));
+                        FM_SIV_StatusIcon.setImageResource(R.drawable.exclamation);
+                        FM_SIV_StatusIcon.setColorFilter(ContextCompat.getColor(requireContext(),R.color.red));
+                    }
+                }
+            });
+        }
+        else{
+            FM_MTV_StatusText.setText("Unable to retrieve dog's age");
+            FM_MTV_StatusText.setTextColor(ContextCompat.getColor(requireContext(),R.color.red));
+            FM_SIV_StatusIcon.setImageResource(R.drawable.exclamation);
+            FM_SIV_StatusIcon.setColorFilter(ContextCompat.getColor(requireContext(),R.color.red));
+        }
+    }
+
+    private int calculateAge(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        LocalDate dob = LocalDate.parse(CurrentDogManager.getInstance().getDog().getDob(), formatter);
+        LocalDate today = LocalDate.now();
+        if(dob!=null && today!=null) {
+            Period period = Period.between(dob, today);
+            return period.getYears();
+        }
+        else
+            return -1;
+    }
+
+    private void showUpdateWeightBottomSheet(){
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.update_weight_bottom_sheet, null);
+        bottomSheetDialog.setContentView(view);
+
+        ShapeableImageView UWBS_SIV_DogPic = view.findViewById(R.id.UWBS_SIV_DogPic);
+        MaterialTextView UWBS_MTV_DogName = view.findViewById(R.id.UWBS_MTV_DogName);
+        MaterialTextView UWBS_MTV_CurrentWeight = view.findViewById(R.id.UWBS_MTV_CurrentWeight);
+        TextInputEditText UWBS_TIET_NewWeight = view.findViewById(R.id.UWBS_TIET_NewWeight);
+        Button UWBS_Button_Update = view.findViewById(R.id.UWBS_Button_Update);
+
+        if(CurrentDogManager.getInstance().getDog().getPhotoURL() == null)
+            UWBS_SIV_DogPic.setImageResource(R.drawable.default_dog_picture);
+        else
+            Glide.with(this).load(CurrentDogManager.getInstance().getDog().getPhotoURL()).error(R.drawable.default_dog_picture).into(UWBS_SIV_DogPic);
+
+        UWBS_MTV_DogName.setText(CurrentDogManager.getInstance().getDog().getName());
+        UWBS_MTV_CurrentWeight.setText(String.valueOf(CurrentDogManager.getInstance().getDog().getWeight()) + " Kg");
+
+        UWBS_Button_Update.setOnClickListener(v -> {
+            String newWeightStr = UWBS_TIET_NewWeight.getText().toString();
+            if(newWeightStr.isEmpty()){
+                Toast.makeText(getContext(), "Please enter a new weight", Toast.LENGTH_SHORT).show();
+            } else{
+                float newWeight = Float.parseFloat(newWeightStr);
+                Call<Void> call = dogApiService.updateWeight(CurrentDogManager.getInstance().getDog().getOwnerEmail(), CurrentDogManager.getInstance().getDog().getName(), newWeight);
+                call.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful()){
+                            Toast.makeText(getContext(), "Weight updated successfully", Toast.LENGTH_SHORT).show();
+                            CurrentDogManager.getInstance().getDog().setWeight(newWeight);
+                            setWeightScale();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable throwable) {
+
+                    }
+                });
+                bottomSheetDialog.dismiss();
+            }
+
+        });
+
+        bottomSheetDialog.show();
     }
 
     @Override

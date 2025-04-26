@@ -13,6 +13,7 @@ import com.example.woof.Model.Dog;
 import com.example.woof.R;
 import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.Singleton.CurrentUserManager;
+import com.example.woof.Singleton.SharedPreferencesHelper;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.DogApi;
 import com.google.android.material.button.MaterialButton;
@@ -87,6 +88,8 @@ public class ChooseDogActivity extends AppCompatActivity {
         ACD_MB_chooseDog.setOnClickListener(v -> {
             if (selectedDog != null) {
                 CurrentDogManager.getInstance().setDog(selectedDog);
+                SharedPreferencesHelper prefs = new SharedPreferencesHelper(ChooseDogActivity.this);
+                prefs.saveDog(selectedDog);
                 Intent intent = new Intent(ChooseDogActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();

@@ -34,6 +34,7 @@ import com.example.woof.R;
 import com.example.woof.Singleton.CloudinaryManager;
 import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.Singleton.CurrentUserManager;
+import com.example.woof.Singleton.SharedPreferencesHelper;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.DogApi;
 import com.example.woof.WoofBackend.OwnerApi;
@@ -322,6 +323,8 @@ public class DogNameAndDobActivity extends AppCompatActivity {
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             Toast.makeText(DogNameAndDobActivity.this,"Dog added to owner list successfully!",Toast.LENGTH_LONG).show();
                             CurrentDogManager.getInstance().setDog(createdDog);
+                            SharedPreferencesHelper prefs = new SharedPreferencesHelper(DogNameAndDobActivity.this);
+                            prefs.saveDog(createdDog);
                             switchIntent();
                         }
 
