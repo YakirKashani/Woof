@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/IN_RL_NotificationCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        >
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/IN_SIV_CreatedByPicture"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/IN_MTV_Description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This is the notification text"
+            android:layout_toEndOf="@id/IN_SIV_CreatedByPicture"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"/>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/IN_SIV_NotificationPicture"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

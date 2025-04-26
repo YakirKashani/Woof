@@ -34,12 +34,14 @@ import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.example.woof.Adapters.FeedAdapter;
 import com.example.woof.Model.NewPost;
+import com.example.woof.Model.Notification;
 import com.example.woof.Model.Post;
 import com.example.woof.R;
 import com.example.woof.Singleton.CloudinaryManager;
 import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.Singleton.CurrentUserManager;
 import com.example.woof.View.MainActivity;
+import com.example.woof.View.NotificationsBottomSheet;
 import com.example.woof.View.PostBottomSheet;
 import com.example.woof.View.SignUpActivity;
 import com.example.woof.WoofBackend.ApiController;
@@ -78,6 +80,7 @@ public class HomeFragment extends Fragment {
     private ShapeableImageView FH_SIV_AddPhoto;
     private MaterialButton FH_MB_PostButton;
     private RecyclerView FH_RV_Posts;
+    private ShapeableImageView FH_SIV_Notifications;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     DogApi dogApiService = ApiController.getRetrofitInstance().create(DogApi.class);
     OwnerApi ownerApiService = ApiController.getRetrofitInstance().create(OwnerApi.class);
@@ -106,6 +109,7 @@ public class HomeFragment extends Fragment {
         FH_SIV_AddPhoto = binding.getRoot().findViewById(R.id.FH_SIV_AddPhoto);
         FH_MB_PostButton = binding.getRoot().findViewById(R.id.FH_MB_PostButton);
         FH_RV_Posts = binding.getRoot().findViewById(R.id.FH_RV_Posts);
+        FH_SIV_Notifications = binding.getRoot().findViewById(R.id.FH_SIV_Notifications);
     }
 
     private void initViews(){
@@ -183,6 +187,31 @@ public class HomeFragment extends Fragment {
         });
         FH_RV_Posts.setAdapter(feedAdapter);
         fetchPosts();
+
+        Call<List<Notification>> notificationsCall = dogApiService.getNewNotificationsByDog(CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+        notificationsCall.enqueue(new Callback<List<Notification>>() {
+            @Override
+            public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
+                if(response.body() != null && response.isSuccessful()) {
+                    if(response.body().isEmpty())
+                        FH_SIV_Notifications.setImageResource(R.drawable.bell);
+                    else
+                        FH_SIV_Notifications.setImageResource(R.drawable.bell_notification);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Notification>> call, Throwable throwable) {
+
+            }
+        });
+
+
+        FH_SIV_Notifications.setOnClickListener(v -> {
+            //TODO: Create notifications bottom sheet
+            NotificationsBottomSheet notificationsBottomSheet = new NotificationsBottomSheet();
+            notificationsBottomSheet.show(getParentFragmentManager(),"notificationsBottomSheet");
+        });
     }
 
     private void fetchPosts(){
