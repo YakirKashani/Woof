@@ -110,4 +110,9 @@ public interface DogApi {
     Call<Void> addNewNotification(@Path("ownerEmail") String ownerEmail,
                                   @Path("dogName") String dogName,
                                     @Body Notification notification);
+
+    @PUT("/dog/updateCollar/{ownerEmail}/{dogName}")
+    Call<Void> updateCollar(@Path("ownerEmail") String ownerEmail,
+                            @Path("dogName") String dogName,
+                            @Body String collarGpsId);
 }

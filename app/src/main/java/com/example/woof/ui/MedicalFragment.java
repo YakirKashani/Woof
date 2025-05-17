@@ -3,8 +3,11 @@ package com.example.woof.ui;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,18 +30,33 @@ import com.example.woof.Adapters.CalendarAdapter;
 import com.example.woof.Adapters.MedicinesViewAdapter;
 import com.example.woof.Adapters.VaccinesViewAdapter;
 import com.example.woof.Model.DayEvent;
+import com.example.woof.Model.Dog;
 import com.example.woof.Model.Medicine;
 import com.example.woof.Model.Vaccine;
 import com.example.woof.R;
 import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.Utils.DogWeightScaleView;
+import com.example.woof.View.MapBottomSheet;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.DogApi;
 import com.example.woof.databinding.FragmentMedicalBinding;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -57,7 +75,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MedicalFragment extends Fragment {
+public class MedicalFragment extends Fragment{
 
     private FragmentMedicalBinding binding;
     private ShapeableImageView FM_SIV_previousMonth;
@@ -72,6 +90,9 @@ public class MedicalFragment extends Fragment {
     private MaterialTextView FM_MTV_StatusText;
     private ShapeableImageView FM_SIV_StatusIcon;
     private Button FM_Button_updateWeight;
+    private TextInputEditText BSAS_TIET_SensorId;
+    private Button FM_BTN_UpdateGpsSensorId;
+    private Button FM_Button_findDog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,6 +101,7 @@ public class MedicalFragment extends Fragment {
         View root = binding.getRoot();
         findViews();
         calendarSetup();
+        initViews();
         FM_Button_addSchedule.setOnClickListener(v -> showAddScheduleBottomSheet());
         FM_Button_updateWeight.setOnClickListener(v -> showUpdateWeightBottomSheet());
         setWeightScale();
@@ -96,6 +118,67 @@ public class MedicalFragment extends Fragment {
         FM_MTV_StatusText = binding.getRoot().findViewById(R.id.FM_MTV_StatusText);
         FM_SIV_StatusIcon = binding.getRoot().findViewById(R.id.FM_SIV_StatusIcon);
         FM_Button_updateWeight = binding.getRoot().findViewById(R.id.FM_Button_updateWeight);
+        BSAS_TIET_SensorId = binding.getRoot().findViewById(R.id.BSAS_TIET_SensorId);
+        FM_BTN_UpdateGpsSensorId = binding.getRoot().findViewById(R.id.FM_BTN_UpdateGpsSensorId);
+        FM_Button_findDog = binding.getRoot().findViewById(R.id.FM_Button_findDog);
+    }
+
+    private void initViews(){
+        if(CurrentDogManager.getInstance().getDog().getCollarGpsId() != null)
+            BSAS_TIET_SensorId.setText(CurrentDogManager.getInstance().getDog().getCollarGpsId());
+
+        FM_BTN_UpdateGpsSensorId.setOnClickListener(v -> {
+            String sensorId = BSAS_TIET_SensorId.getText().toString();
+            if(sensorId.isEmpty())
+                Toast.makeText(getContext(), "Please enter a sensor id", Toast.LENGTH_SHORT).show();
+            else{
+                Call<Void> updateGpsCollarCall = dogApiService.updateCollar(CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName(),sensorId);
+                updateGpsCollarCall.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if(response.isSuccessful())
+                            Toast.makeText(getContext(), "GPS sensor id updated successfully", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getContext(), "Error updating gps sensor id", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable throwable) {
+                        Toast.makeText(getContext(), "Error updating gps sensor id", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        FM_Button_findDog.setOnClickListener(v -> {
+            openMapBottomSheet();
+        });
+    }
+
+    private void openMapBottomSheet(){
+        if(CurrentDogManager.getInstance().getDog().getCollarGpsId() != null) {
+            FirebaseApp.initializeApp(getContext());
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("location/" + CurrentDogManager.getInstance().getDog().getCollarGpsId());
+            ref.orderByChild("timestamp").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot child : snapshot.getChildren()){
+                        double lat = Double.parseDouble(child.child("lat").getValue(String.class));
+                        double lon = Double.parseDouble(child.child("lon").getValue(String.class));
+                        String timestamp = child.child("timestamp").getValue(String.class);
+                        MapBottomSheet mapBottomSheet = new MapBottomSheet(new LatLng(lat,lon),timestamp);
+                        mapBottomSheet.show(getParentFragmentManager(), mapBottomSheet.getTag());
+
+                        Log.e("GPS", "Lat: " + lat + " Lon: " + lon + " Timestamp: " + timestamp);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("GPS", "Firebase error: " + error.getMessage());
+                }
+            });
+        }
     }
 
     private void calendarSetup(){

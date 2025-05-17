@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -22,6 +23,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Woof"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA8Nw3kOI5uM11wjXL-VvRE7wrijc-TyWE" />
+
+        <activity
+            android:name=".View.MapActivity"
+            android:exported="false"/>
+
         <activity
             android:name=".View.OwnerProfile"
             android:exported="false" />
@@ -39,7 +49,7 @@
             android:exported="false" />
         <activity
             android:name=".View.SignUpActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".View.SignInActivity"
             android:exported="true">

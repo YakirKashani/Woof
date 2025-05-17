@@ -209,8 +209,22 @@ public class HomeFragment extends Fragment {
 
         FH_SIV_Notifications.setOnClickListener(v -> {
             //TODO: Create notifications bottom sheet
-            NotificationsBottomSheet notificationsBottomSheet = new NotificationsBottomSheet();
-            notificationsBottomSheet.show(getParentFragmentManager(),"notificationsBottomSheet");
+            Call<List<Notification>> notificationCall = dogApiService.getAllNotificationsByDog(CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+            notificationCall.enqueue(new Callback<List<Notification>>() {
+                @Override
+                public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
+                    if(response.isSuccessful() && !response.body().isEmpty()) {
+                        NotificationsBottomSheet notificationsBottomSheet = new NotificationsBottomSheet(response.body());
+                        notificationsBottomSheet.show(getParentFragmentManager(),"notificationsBottomSheet");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Notification>> call, Throwable throwable) {
+
+                }
+            });
+
         });
     }
 

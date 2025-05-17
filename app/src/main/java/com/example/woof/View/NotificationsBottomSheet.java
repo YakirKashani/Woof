@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.woof.Adapters.NotificationsAdapter;
@@ -30,7 +31,8 @@ public class NotificationsBottomSheet extends BottomSheetDialogFragment {
     private List<Notification> notifications;
     DogApi dogApiService = ApiController.getRetrofitInstance().create(DogApi.class);
 
-    public NotificationsBottomSheet(){
+    public NotificationsBottomSheet(List<Notification> notifications){
+        this.notifications = notifications;
     }
 
     @Nullable
@@ -38,24 +40,9 @@ public class NotificationsBottomSheet extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.notifications_bottom_sheet, container, false);
         NBS_RV_NotificationRecyclerView = view.findViewById(R.id.NBS_RV_NotificationRecyclerView);
-        notifications = new ArrayList<>();
+        NBS_RV_NotificationRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         notificationAdapter = new NotificationsAdapter(notifications);
         NBS_RV_NotificationRecyclerView.setAdapter(notificationAdapter);
-        Call<List<Notification>> notificationCall = dogApiService.getAllNotificationsByDog(CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
-        notificationCall.enqueue(new Callback<List<Notification>>() {
-            @Override
-            public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
-                if(response.isSuccessful() && !response.body().isEmpty()) {
-                    notifications.addAll(response.body());
-                    notificationAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Notification>> call, Throwable throwable) {
-
-            }
-        });
         markAllNotificationAsRead();
         return view;
     }
@@ -65,12 +52,10 @@ public class NotificationsBottomSheet extends BottomSheetDialogFragment {
         ReadAllCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable throwable) {
-
             }
         });
     }

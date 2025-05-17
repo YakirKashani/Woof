@@ -43,7 +43,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @Override
     public void onBindViewHolder(@NonNull NotificationsViewHolder holder, int position) {
         Notification notification = notifications.get(position);
-        if(notification.isNew()){
+        if(notification.isNewNotification()){
             holder.IN_RL_NotificationCard.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.NewNotificationBackgroundColor));
         } else{
             holder.IN_RL_NotificationCard.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.white));

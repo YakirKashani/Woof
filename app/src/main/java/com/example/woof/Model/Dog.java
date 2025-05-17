@@ -12,6 +12,7 @@ public class Dog {
     private String gender;
     private List<String> followers;
     private List<String> following;
+    private String collarGpsId;
 
     public String getBreed() {
         return breed;
@@ -85,6 +86,14 @@ public class Dog {
         this.following = following;
     }
 
+    public String getCollarGpsId() {
+        return collarGpsId;
+    }
+
+    public void setCollarGpsId(String collarGpsId) {
+        this.collarGpsId = collarGpsId;
+    }
+
     @Override
     public String toString() {
         return "Dog{" +
@@ -97,6 +106,7 @@ public class Dog {
                 ", gender='" + gender + '\'' +
                 ", followers=" + followers +
                 ", following=" + following +
+                ", collarGpsId='" + collarGpsId + '\'' +
                 '}';
     }
 }

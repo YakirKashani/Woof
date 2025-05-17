@@ -5,17 +5,17 @@ public class Notification {
     private String dogCreatedNotification;
     private String message;
     private String imgUrl;
-    private boolean isNew;
+    private boolean newNotification;
 
     public Notification() {
     }
 
-    public Notification(String ownerCreatedNotification, String dogCreatedNotification, String message, String imgUrl, boolean isNew) {
+    public Notification(String ownerCreatedNotification, String dogCreatedNotification, String message, String imgUrl, boolean newNotification) {
         this.ownerCreatedNotification = ownerCreatedNotification;
         this.dogCreatedNotification = dogCreatedNotification;
         this.message = message;
         this.imgUrl = imgUrl;
-        this.isNew = isNew;
+        this.newNotification = newNotification;
     }
 
     public String getOwnerCreatedNotification() {
@@ -50,12 +50,12 @@ public class Notification {
         this.imgUrl = imgUrl;
     }
 
-    public boolean isNew() {
-        return isNew;
+    public boolean isNewNotification() {
+        return newNotification;
     }
 
-    public void setNew(boolean aNew) {
-        isNew = aNew;
+    public void setNewNotification(boolean newNotification) {
+        this.newNotification = newNotification;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class Notification {
                 ", dogCreatedNotification='" + dogCreatedNotification + '\'' +
                 ", message='" + message + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
-                ", isNew=" + isNew +
+                ", newNotification=" + newNotification +
                 '}';
     }
 }

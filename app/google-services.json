@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "399472288618",
+    "firebase_url": "https://woof-gps-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "woof-gps",
+    "storage_bucket": "woof-gps.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:399472288618:android:1f4ef3ac650e55247cfb13",
+        "android_client_info": {
+          "package_name": "com.example.woof"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBB7oOJvk0mWuzh65xh5LipMRHeYTP7R_E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
