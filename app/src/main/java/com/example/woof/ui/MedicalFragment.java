@@ -93,12 +93,17 @@ public class MedicalFragment extends Fragment{
     private TextInputEditText BSAS_TIET_SensorId;
     private Button FM_BTN_UpdateGpsSensorId;
     private Button FM_Button_findDog;
+    private ShapeableImageView FM_SIV_foodAmount;
+    private MaterialTextView FM_MTV_foodAmount;
+    private ShapeableImageView FM_SIV_waterAmount;
+    private MaterialTextView FM_MTV_WaterAmount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentMedicalBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        FirebaseApp.initializeApp(getContext());
         findViews();
         calendarSetup();
         initViews();
@@ -121,6 +126,10 @@ public class MedicalFragment extends Fragment{
         BSAS_TIET_SensorId = binding.getRoot().findViewById(R.id.BSAS_TIET_SensorId);
         FM_BTN_UpdateGpsSensorId = binding.getRoot().findViewById(R.id.FM_BTN_UpdateGpsSensorId);
         FM_Button_findDog = binding.getRoot().findViewById(R.id.FM_Button_findDog);
+        FM_SIV_foodAmount = binding.getRoot().findViewById(R.id.FM_SIV_foodAmount);
+        FM_MTV_foodAmount = binding.getRoot().findViewById(R.id.FM_MTV_foodAmount);
+        FM_SIV_waterAmount = binding.getRoot().findViewById(R.id.FM_SIV_waterAmount);
+        FM_MTV_WaterAmount = binding.getRoot().findViewById(R.id.FM_MTV_WaterAmount);
     }
 
     private void initViews(){
@@ -153,11 +162,36 @@ public class MedicalFragment extends Fragment{
         FM_Button_findDog.setOnClickListener(v -> {
             openMapBottomSheet();
         });
+
+        setBowls();
+    }
+
+    private void setBowls(){
+        if(CurrentDogManager.getInstance().getDog().getNutritionSensorsId() != null){
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference(CurrentDogManager.getInstance().getDog().getNutritionSensorsId());
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Double foodWeight = snapshot.child("food").child("weight").getValue(Double.class);
+                    Double waterWeight = snapshot.child("water").child("weight").getValue(Double.class);
+                    Log.e("Nutrition", "Food weight: " + foodWeight + " Water weight: " + waterWeight);
+                    FM_MTV_foodAmount.setText(String.valueOf(foodWeight));
+                    FM_MTV_WaterAmount.setText(String.valueOf(waterWeight));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        }
+
     }
 
     private void openMapBottomSheet(){
         if(CurrentDogManager.getInstance().getDog().getCollarGpsId() != null) {
-            FirebaseApp.initializeApp(getContext());
+     //       FirebaseApp.initializeApp(getContext());
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("location/" + CurrentDogManager.getInstance().getDog().getCollarGpsId());
             ref.orderByChild("timestamp").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
