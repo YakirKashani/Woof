@@ -8,9 +8,11 @@ import com.example.woof.Model.Vaccine;
 
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -111,13 +113,13 @@ public interface DogApi {
                                   @Path("dogName") String dogName,
                                     @Body Notification notification);
 
-    @PUT("/dog/updateCollar/{ownerEmail}/{dogName}")
+    @PUT("dog/updateCollar/{ownerEmail}/{dogName}")
     Call<Void> updateCollar(@Path("ownerEmail") String ownerEmail,
                             @Path("dogName") String dogName,
-                            @Body String collarGpsId);
+                            @Body RequestBody collarGpsId);
 
-    @PUT("/dog/updateNutritionSensor/{ownerEmail}/{dogName}")
-    Call<Void> updateSensor(@Path("ownerEmail") String ownerEmail,
+    @PUT("dog/updateNutritionSensor/{ownerEmail}/{dogName}")
+    Call<Void> updateNutritionSensor(@Path("ownerEmail") String ownerEmail,
                             @Path("dogName") String dogName,
-                            @Body String nutritionSensorId);
+                            @Body RequestBody nutritionSensorId);
 }

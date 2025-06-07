@@ -322,7 +322,7 @@ public class DogNameAndDobActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             Toast.makeText(DogNameAndDobActivity.this,"Dog added to owner list successfully!",Toast.LENGTH_LONG).show();
-                            CurrentDogManager.getInstance().setDog(createdDog);
+                            CurrentDogManager.getInstance().setDog(createdDog,getApplicationContext());
                             SharedPreferencesHelper prefs = new SharedPreferencesHelper(DogNameAndDobActivity.this);
                             prefs.saveDog(createdDog);
                             switchIntent();

@@ -71,6 +71,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -97,6 +99,8 @@ public class MedicalFragment extends Fragment{
     private MaterialTextView FM_MTV_foodAmount;
     private ShapeableImageView FM_SIV_waterAmount;
     private MaterialTextView FM_MTV_WaterAmount;
+    private TextInputEditText BSAS_TIET_NutritionSensorId;
+    private Button FM_BTN_UpdateNutritionSensorId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,6 +108,20 @@ public class MedicalFragment extends Fragment{
         binding = FragmentMedicalBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         FirebaseApp.initializeApp(getContext());
+        Call<Dog> dogCall = dogApiService.findDog(CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+        dogCall.enqueue(new Callback<Dog>() {
+            @Override
+            public void onResponse(Call<Dog> call, Response<Dog> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    refreshDog(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Dog> call, Throwable throwable) {
+
+            }
+        });
         findViews();
         calendarSetup();
         initViews();
@@ -130,24 +148,41 @@ public class MedicalFragment extends Fragment{
         FM_MTV_foodAmount = binding.getRoot().findViewById(R.id.FM_MTV_foodAmount);
         FM_SIV_waterAmount = binding.getRoot().findViewById(R.id.FM_SIV_waterAmount);
         FM_MTV_WaterAmount = binding.getRoot().findViewById(R.id.FM_MTV_WaterAmount);
+        BSAS_TIET_NutritionSensorId = binding.getRoot().findViewById(R.id.BSAS_TIET_NutritionSensorId);
+        FM_BTN_UpdateNutritionSensorId = binding.getRoot().findViewById(R.id.FM_BTN_UpdateNutritionSensorId);
     }
 
-    private void initViews(){
-        if(CurrentDogManager.getInstance().getDog().getCollarGpsId() != null)
+    private void initViews() {
+        if (CurrentDogManager.getInstance().getDog().getCollarGpsId() != null)
             BSAS_TIET_SensorId.setText(CurrentDogManager.getInstance().getDog().getCollarGpsId());
 
         FM_BTN_UpdateGpsSensorId.setOnClickListener(v -> {
             String sensorId = BSAS_TIET_SensorId.getText().toString();
-            if(sensorId.isEmpty())
+            RequestBody body = RequestBody.create(MediaType.parse("text/plain"), sensorId);
+            if (sensorId.isEmpty())
                 Toast.makeText(getContext(), "Please enter a sensor id", Toast.LENGTH_SHORT).show();
-            else{
-                Call<Void> updateGpsCollarCall = dogApiService.updateCollar(CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName(),sensorId);
+            else {
+                Call<Void> updateGpsCollarCall = dogApiService.updateCollar(CurrentDogManager.getInstance().getDog().getOwnerEmail(), CurrentDogManager.getInstance().getDog().getName(), body);
                 updateGpsCollarCall.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
-                        if(response.isSuccessful())
+                        if (response.isSuccessful()) {
                             Toast.makeText(getContext(), "GPS sensor id updated successfully", Toast.LENGTH_SHORT).show();
-                        else
+                            Call<Dog> dogCall = dogApiService.findDog(CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+                            dogCall.enqueue(new Callback<Dog>() {
+                                @Override
+                                public void onResponse(Call<Dog> call, Response<Dog> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        CurrentDogManager.getInstance().setDog(response.body(),getContext());
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Dog> call, Throwable throwable) {
+
+                                }
+                            });
+                        } else
                             Toast.makeText(getContext(), "Error updating gps sensor id", Toast.LENGTH_SHORT).show();
                     }
 
@@ -163,6 +198,54 @@ public class MedicalFragment extends Fragment{
             openMapBottomSheet();
         });
 
+        if (CurrentDogManager.getInstance().getDog().getNutritionSensorsId() != null) {
+            Log.e("CurrentDogManager",CurrentDogManager.getInstance().getDog().toString());
+            BSAS_TIET_NutritionSensorId.setText(CurrentDogManager.getInstance().getDog().getNutritionSensorsId());
+        }
+
+        FM_BTN_UpdateNutritionSensorId.setOnClickListener(v -> {
+            String sensorId = BSAS_TIET_NutritionSensorId.getText().toString();
+            RequestBody body = RequestBody.create(MediaType.parse("text/plain"), sensorId);
+            if (sensorId.isEmpty())
+                Toast.makeText(getContext(), "Please enter a sensor id", Toast.LENGTH_SHORT).show();
+            else {
+                Call<Void> updateNutritionSensorCall = dogApiService.updateNutritionSensor(CurrentDogManager.getInstance().getDog().getOwnerEmail(), CurrentDogManager.getInstance().getDog().getName(), body);
+                updateNutritionSensorCall.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(getContext(), "Nutrition sensor id updated successfully", Toast.LENGTH_SHORT).show();
+                            Call<Dog> dogCall = dogApiService.findDog(CurrentDogManager.getInstance().getDog().getOwnerEmail(),CurrentDogManager.getInstance().getDog().getName());
+                            dogCall.enqueue(new Callback<Dog>() {
+                                @Override
+                                public void onResponse(Call<Dog> call, Response<Dog> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        CurrentDogManager.getInstance().setDog(response.body(),getContext());
+                                        setBowls();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Dog> call, Throwable throwable) {
+
+                                }
+                            });
+                        }
+                        else {
+                            Toast.makeText(getContext(), "Error updating nutrition sensor id {1}", Toast.LENGTH_SHORT).show();
+                            Log.e("Medical fragment", "Error updating nutrition sensor id: " + response.message());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable throwable) {
+                        Toast.makeText(getContext(), "Error updating nutrition sensor id {2}", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+        });
+
         setBowls();
     }
 
@@ -175,8 +258,29 @@ public class MedicalFragment extends Fragment{
                     Double foodWeight = snapshot.child("food").child("weight").getValue(Double.class);
                     Double waterWeight = snapshot.child("water").child("weight").getValue(Double.class);
                     Log.e("Nutrition", "Food weight: " + foodWeight + " Water weight: " + waterWeight);
-                    FM_MTV_foodAmount.setText(String.valueOf(foodWeight));
-                    FM_MTV_WaterAmount.setText(String.valueOf(waterWeight));
+                    FM_MTV_foodAmount.setText(String.valueOf(foodWeight) + " g");
+                    FM_MTV_WaterAmount.setText(String.valueOf(waterWeight) + " g");
+                    if(foodWeight != null){
+                        if(foodWeight < 10)
+                            FM_SIV_foodAmount.setImageResource(R.drawable.empty);
+                        else if(foodWeight < 20)
+                            FM_SIV_foodAmount.setImageResource(R.drawable.quarterfood);
+                        else if(foodWeight < 30)
+                            FM_SIV_foodAmount.setImageResource(R.drawable.halffood);
+                        else
+                            FM_SIV_foodAmount.setImageResource(R.drawable.fullfood);
+                    }
+
+                    if(waterWeight != null){
+                        if(waterWeight < 10)
+                            FM_SIV_waterAmount.setImageResource(R.drawable.empty);
+                        else if(waterWeight < 20)
+                            FM_SIV_waterAmount.setImageResource(R.drawable.waterquarter);
+                        else if(waterWeight < 30)
+                            FM_SIV_waterAmount.setImageResource(R.drawable.waterhalf);
+                        else
+                            FM_SIV_waterAmount.setImageResource(R.drawable.waterfull);
+                    }
                 }
 
                 @Override
@@ -638,6 +742,10 @@ public class MedicalFragment extends Fragment{
 
         bottomSheetDialog.show();
     }
+
+private void refreshDog(Dog dog){
+        CurrentDogManager.getInstance().setDog(dog,getContext());
+}
 
     @Override
     public void onDestroyView() {

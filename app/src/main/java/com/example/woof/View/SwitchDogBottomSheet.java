@@ -33,7 +33,7 @@ public class SwitchDogBottomSheet extends BottomSheetDialogFragment {
         RecyclerView BSDL_RV_dogsRecyclerView = view.findViewById(R.id.BSDL_RV_dogsRecyclerView);
         BSDL_RV_dogsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         BSDL_RV_dogsRecyclerView.setAdapter(new SwitchDogAdapter(dogs, dog -> {
-            CurrentDogManager.getInstance().setDog(dog);
+            CurrentDogManager.getInstance().setDog(dog,getContext());
             dismiss();
             if(getActivity() instanceof MainActivity) {
                 MainActivity mainActivity = (MainActivity) getActivity();

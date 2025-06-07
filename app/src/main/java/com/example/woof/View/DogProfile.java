@@ -236,7 +236,7 @@ public class DogProfile extends AppCompatActivity {
         refreshCurrentDog.enqueue(new Callback<Dog>() {
             @Override
             public void onResponse(Call<Dog> call, Response<Dog> response) {
-                CurrentDogManager.getInstance().setDog(response.body());
+                CurrentDogManager.getInstance().setDog(response.body(),getApplicationContext());
             }
 
             @Override

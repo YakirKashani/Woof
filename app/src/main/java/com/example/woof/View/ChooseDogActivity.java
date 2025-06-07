@@ -87,9 +87,9 @@ public class ChooseDogActivity extends AppCompatActivity {
         ACD_MB_AddDog.setOnClickListener(v -> AddDogClicked());
         ACD_MB_chooseDog.setOnClickListener(v -> {
             if (selectedDog != null) {
-                CurrentDogManager.getInstance().setDog(selectedDog);
-                SharedPreferencesHelper prefs = new SharedPreferencesHelper(ChooseDogActivity.this);
-                prefs.saveDog(selectedDog);
+                CurrentDogManager.getInstance().setDog(selectedDog,getApplicationContext());
+            //    SharedPreferencesHelper prefs = new SharedPreferencesHelper(ChooseDogActivity.this);
+            //    prefs.saveDog(selectedDog);
                 Intent intent = new Intent(ChooseDogActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
