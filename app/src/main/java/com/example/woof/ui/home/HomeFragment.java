@@ -1,5 +1,7 @@
 package com.example.woof.ui.home;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -89,6 +91,9 @@ public class HomeFragment extends Fragment {
     private List<Post> posts;
     private Uri newPostImageURI;
 
+    private static final int PICK_IMAGE =  1;
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel =
@@ -113,6 +118,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initViews(){
+        initPictureTaker();
         posts = new ArrayList<>();
         FH_IV_UploadedImage.setVisibility(View.GONE);
         FH_MB_PostButton.setEnabled(false);
@@ -133,28 +139,10 @@ public class HomeFragment extends Fragment {
 
             }
         });
-
-
-        //TODO: 2. allow the user pick image when (gallery / camera) and put it in the Image view
-        imagePickerLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if(result.getResultCode() == Activity.RESULT_OK && result.getData() != null){
-                        Intent data = result.getData();
-                        if(data.getData() != null){
-                            newPostImageURI = data.getData();
-                            FH_IV_UploadedImage.setImageURI(newPostImageURI);
-                            FH_IV_UploadedImage.setVisibility(View.VISIBLE);
-                        } else if (data.getExtras() != null){
-                            Bitmap capturedImage = (Bitmap) data.getExtras().get("data");
-                            FH_IV_UploadedImage.setImageBitmap(capturedImage);
-                            newPostImageURI = getImageUriFromBitmap(capturedImage);
-                            FH_IV_UploadedImage.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-        );
         FH_SIV_AddPhoto.setOnClickListener(v -> openImagePicker());
+
+
+
 
         //TODO: 3. save the post in DB when pressing POST
         FH_MB_PostButton.setOnClickListener(v -> {
@@ -173,8 +161,7 @@ public class HomeFragment extends Fragment {
                 getActivity().runOnUiThread(() -> uploadImageToCloudinaryAndSaveInDB(post,newPostImageURI));
             }
             else {
-                post.setPictureUrl("none");
-                SavePostInDB(post);
+                Toast.makeText(getContext(),"Can't upload post with no photo", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -293,7 +280,6 @@ public class HomeFragment extends Fragment {
                 }
                 else{
                     Toast.makeText(getContext(),"Upload failed", Toast.LENGTH_LONG).show();
-                  //  SignUp_IV_OwnerProfilePhoto.setImageResource(R.drawable.default_owner_picture);
                 }
             }
 
@@ -310,17 +296,35 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void openImagePicker(){
+    private void initPictureTaker(){
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if(result.getResultCode() == RESULT_OK && result.getData() != null){
+                        Uri imageUri = result.getData().getData();
+                        if(imageUri != null) {
+                            newPostImageURI = imageUri;
+                            FH_IV_UploadedImage.setImageURI(newPostImageURI);
+                            FH_IV_UploadedImage.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
 
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        Intent chooser = Intent.createChooser(galleryIntent, "Select Image");
-        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
-
-        imagePickerLauncher.launch(chooser);
-
+        takePhotoLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if(result.getResultCode() == RESULT_OK && result.getData() != null){
+                        Bundle extras = result.getData().getExtras();
+                        if(extras != null){
+                            Bitmap imageBitmap = (Bitmap) extras.get("data");
+                            newPostImageURI = getImageUriFromBitmap(imageBitmap);
+                            FH_IV_UploadedImage.setImageBitmap(imageBitmap);
+                            FH_IV_UploadedImage.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
     }
+
 
     private Uri getImageUriFromBitmap(Bitmap bitmap){
         String path = MediaStore.Images.Media.insertImage(getContext().getContentResolver(),bitmap,"Title",null);
@@ -332,4 +336,53 @@ public class HomeFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+    private void openImagePicker(){
+        new AlertDialog.Builder(getContext())
+                .setTitle("Choose an option")
+                .setItems(new String[]{"Choose from gallery","Open camera"},(dialog, which) -> {
+                    if(which == 0) openGallery();
+                    else if(which == 1) requestCameraPermission();
+
+                }).show();
+    }
+
+    private void requestCameraPermission() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+        } else {
+            openCamera();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(getContext(), "Camera permission is required", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+            takePhotoLauncher.launch(takePictureIntent);
+        }else {
+            Toast.makeText(getContext(), "No camera app found!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openGallery(){
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickImageLauncher.launch(intent);
+    }
+
+
 }

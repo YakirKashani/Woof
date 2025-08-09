@@ -1,5 +1,6 @@
 package com.example.woof.ui.notifications;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.example.woof.R;
 import com.example.woof.Singleton.CurrentDogManager;
 import com.example.woof.Singleton.CurrentUserManager;
 import com.example.woof.View.PostBottomSheet;
+import com.example.woof.View.SignInActivity;
 import com.example.woof.WoofBackend.ApiController;
 import com.example.woof.WoofBackend.PostApi;
 import com.example.woof.databinding.FragmentNotificationsBinding;
@@ -38,6 +40,7 @@ import retrofit2.Response;
 public class NotificationsFragment extends Fragment {
 
     private FragmentNotificationsBinding binding;
+    private MaterialButton btnSignOut;
     private ImageView FN_IV_DogPicture;
     private TextView textOwner;
     private ImageView FN_IV_OwnerPicture;
@@ -74,9 +77,17 @@ public class NotificationsFragment extends Fragment {
         textFollowing = binding.getRoot().findViewById(R.id.textFollowing);
         FN_RV_Posts = binding.getRoot().findViewById(R.id.FN_RV_Posts);
         textPosts = binding.getRoot().findViewById(R.id.textPosts);
+        btnSignOut = binding.getRoot().findViewById(R.id.btnSignOut);
     }
 
     private void initViews(){
+        btnSignOut.setOnClickListener(v -> {
+            CurrentUserManager.getInstance().logout(getContext());
+            CurrentDogManager.getInstance().logout(getContext());
+            Intent intent = new Intent(getActivity(), SignInActivity.class);
+            startActivity(intent);
+        });
+
         posts = new ArrayList<>();
         Log.e("Current Dog manager", CurrentDogManager.getInstance().getDog().toString());
         Log.e("Current Owner manager", CurrentUserManager.getInstance().getOwner().toString());

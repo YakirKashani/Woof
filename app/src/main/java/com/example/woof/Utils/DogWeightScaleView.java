@@ -103,8 +103,8 @@ public class DogWeightScaleView extends View {
         }
 
         // Optionally: Draw min/max labels
-        canvas.drawText("Min: " + minWeight, rangeStartX, centerY - 60, textPaint);
-        canvas.drawText("Max: " + maxWeight, rangeEndX, centerY - 60, textPaint);
+        canvas.drawText("" + minWeight, rangeStartX, centerY - 60, textPaint);
+        canvas.drawText("" + maxWeight, rangeEndX, centerY - 60, textPaint);
     }
 
     private float getPositionForWeight(float weight, float startX, float endX) {

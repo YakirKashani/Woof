@@ -509,15 +509,6 @@ public class MedicalFragment extends Fragment{
             if(type.isEmpty() || description.isEmpty() || date.isEmpty() || (type.equals("Medicine") && amountStr.isEmpty())){
                 Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
             } else{
-
-                try {
-                    amount = Integer.parseInt(amountStr);
-                } catch (NumberFormatException e) {
-                    Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Log.e("Medical fragment", "Type: " + type + " Description: " + description + " Date: " + date);
-
                 if(type.equals("Vaccine")) {
                     Call<Void> call = dogApiService.addNewVaccine(CurrentDogManager.getInstance().getDog().getOwnerEmail(), CurrentDogManager.getInstance().getDog().getName(), new Vaccine(description, date));
                     call.enqueue(new Callback<Void>() {
@@ -537,6 +528,13 @@ public class MedicalFragment extends Fragment{
                         }
                     });
                 } else {
+                    try {
+                        amount = Integer.parseInt(amountStr);
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Log.e("Medical fragment", "Type: " + type + " Description: " + description + " Date: " + date);
                     Call<Void> call = dogApiService.addNewMedicine(CurrentDogManager.getInstance().getDog().getOwnerEmail(), CurrentDogManager.getInstance().getDog().getName(), new Medicine(description,amount, date));
                     call.enqueue(new Callback<Void>() {
                         @Override

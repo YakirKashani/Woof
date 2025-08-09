@@ -35,5 +35,12 @@ public class CurrentDogManager {
         prefs.saveDog(dog);
     }
 
+    public void logout(Context context){
+        SharedPreferencesHelper prefs = new SharedPreferencesHelper(context);
+        prefs.clear();
+        instance = null;
+        dog = null;
+    }
+
 
 }

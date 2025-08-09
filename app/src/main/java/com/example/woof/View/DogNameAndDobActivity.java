@@ -297,7 +297,8 @@ public class DogNameAndDobActivity extends AppCompatActivity {
 
         String DogBreed = getIntent().getStringExtra("selected breed");
         String DogName = NameAndDOB_ET_inputDogName.getText().toString();
-        String DogDob = (day + "/" + month + "/" + year);
+    //    String DogDob = (day + "." + month + "." + year);
+        String DogDob = String.format("%02d.%02d.%d", day, month, year);
         String dogWeightStr = NameAndDOB_ET_inputWeight.getText().toString();
         float DogWeight = Float.parseFloat(dogWeightStr); // CRUSH
 
